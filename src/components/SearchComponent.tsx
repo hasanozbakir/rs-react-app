@@ -2,11 +2,9 @@ import React, { Component } from 'react';
 import SearchInput from './SearchInput';
 import Button from './Button';
 import ResponseDisplay from './ResponseDisplay';
+import Spinner from './loading/Spinner';
 import { searchApi } from '../services/apiResponse';
-
-interface ApiResponse {
-  results: { id: number; name: string }[];
-}
+import { ApiResponse } from '../utils/types';
 
 interface SearchComponentState {
   inputValue: string;
@@ -17,21 +15,41 @@ interface SearchComponentState {
 class SearchComponent extends Component<{}, SearchComponentState> {
   constructor(props: {}) {
     super(props);
+
+    // Initialize state with the value from local storage (if it exists)
+    const savedSearchTerm = localStorage.getItem('searchTerm') || '';
+
     this.state = {
-      inputValue: '',
+      inputValue: savedSearchTerm, // Set initial value from local storage
       apiResponse: null,
       loading: false,
     };
   }
 
+  // Save the search term to local storage whenever it changes
+  handleInputChange = (value: string) => {
+    this.setState({ inputValue: value });
+    localStorage.setItem('searchTerm', value); // Save to local storage
+  };
+
+  handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      this.handleSearch(); // Trigger search on Enter key press
+    }
+  };
+
   handleSearch = async () => {
     const { inputValue } = this.state;
-    if (!inputValue) return;
+
+    // Trim the search term to remove trailing spaces
+    const searchTerm = inputValue.trim();
 
     this.setState({ loading: true });
 
     try {
-      const data = await searchApi(inputValue);
+      // If the input is empty, fetch all items (first page)
+      const query = searchTerm ? `?search=${searchTerm}` : '?page=1';
+      const data = await searchApi(query);
       this.setState({ apiResponse: data });
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -45,8 +63,13 @@ class SearchComponent extends Component<{}, SearchComponentState> {
 
     return (
       <div className="search-container">
-        <SearchInput value={inputValue} onChange={(value) => this.setState({ inputValue: value })} />
+        <SearchInput
+          value={inputValue}
+          onChange={this.handleInputChange} 
+          onKeyDown={this.handleKeyDown}
+        />
         <Button onClick={this.handleSearch}>Search</Button>
+        {loading && <Spinner />}
         <ResponseDisplay apiResponse={apiResponse} loading={loading} />
       </div>
     );
