@@ -2,11 +2,12 @@ import React from 'react'
 import SearchComponent from './components/SearchComponent'
 import './App.css'
 
+
 function App() {
 
   return (
   <div className='app-container'>
-    <h1>Search App</h1>
+    <h1>SWAPI API People Search</h1>
     <SearchComponent />
   </div>
   )

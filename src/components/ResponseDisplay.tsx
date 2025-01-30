@@ -10,31 +10,38 @@ class ResponseDisplay extends Component<ResponseDisplayProps> {
   render() {
     const { apiResponse, loading } = this.props;
 
+    // Display loading message
     if (loading) {
       return <p>Loading...</p>;
     }
 
+    // Handle null or undefined apiResponse
     if (!apiResponse || !apiResponse.results) {
       return null;
     }
 
+    // Handle empty results
+    if (apiResponse.results.length === 0) {
+      return <p>No results found. Please try another search term.</p>;
+    }
+
+    // Display results
     return (
       <div className="response-container">
-          {apiResponse.results.length === 0 ? 
-            <p>No results found. Please try another search term.</p>:
-          <ul>
-            <li>
-              <span className='list-name'>Name:</span>
-              <span className='list-description'>Description:</span>
-            </li> 
-          {apiResponse.results.map((result) => (   
+        <p className='list-title'>
+          <span>Name:</span>
+          <span>Description:</span>
+        </p>
+        <ul>
+          {apiResponse.results.map((result) => (
             <li key={result.url}>
-              <span className='list-name'>{result.name}</span>
-              <span className='list-description'>
+              <span className="list-name">{result.name}</span>
+              <span className="list-description">
                 Born in {result.birth_year} with {result.eye_color} eyes
               </span>
-            </li>))}
-          </ul>}
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }

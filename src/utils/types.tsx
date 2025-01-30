@@ -8,20 +8,20 @@ interface ApiResponse {
 interface People {
   birth_year: string;
   eye_color: string;
-  films: string[]; // URLs to films
+  films: string[];
   gender: string;
   hair_color: string;
   height: string;
-  homeworld: string; // URL to a planet
+  homeworld: string;
   mass: string;
   name: string;
   skin_color: string;
   created: string;
   edited: string;
-  species: string[]; // URLs to species
-  starships: string[]; // URLs to starships
+  species: string[];
+  starships: string[]; 
   url: string;
-  vehicles: string[]; // URLs to vehicles
+  vehicles: string[];
 }
 
 export type { ApiResponse };

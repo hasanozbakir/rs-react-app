@@ -10,6 +10,8 @@ interface SearchComponentState {
   inputValue: string;
   apiResponse: ApiResponse | null;
   loading: boolean;
+  error: string | null;  
+  throwError: boolean;
 }
 
 class SearchComponent extends Component<{}, SearchComponentState> {
@@ -20,28 +22,28 @@ class SearchComponent extends Component<{}, SearchComponentState> {
     const savedSearchTerm = localStorage.getItem('searchTerm') || '';
 
     this.state = {
-      inputValue: savedSearchTerm, // Set initial value from local storage
+      inputValue: savedSearchTerm, 
       apiResponse: null,
       loading: false,
+      error: null,
+      throwError: false,
     };
   }
 
-  // Save the search term to local storage whenever it changes
   handleInputChange = (value: string) => {
     this.setState({ inputValue: value });
-    localStorage.setItem('searchTerm', value); // Save to local storage
+    localStorage.setItem('searchTerm', value); 
   };
 
   handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      this.handleSearch(); // Trigger search on Enter key press
+      this.handleSearch(); 
     }
   };
 
   handleSearch = async () => {
     const { inputValue } = this.state;
 
-    // Trim the search term to remove trailing spaces
     const searchTerm = inputValue.trim();
 
     this.setState({ loading: true });
@@ -49,17 +51,25 @@ class SearchComponent extends Component<{}, SearchComponentState> {
     try {
       // If the input is empty, fetch all items (first page)
       const query = searchTerm ? `?search=${searchTerm}` : '?page=1';
-      const data = await searchApi(query);
+      const data = await searchApi('people', query);
       this.setState({ apiResponse: data });
     } catch (error) {
-      console.error('Error fetching data:', error);
+      if (error instanceof Error) {
+        this.setState({ error: error.message });
+      } else {
+        this.setState({ error: 'An unknown error occurred.' });
+      }
     } finally {
       this.setState({ loading: false });
     }
   };
 
+  simulateError = () => {
+    this.setState({ throwError: true });
+  };
+
   render() {
-    const { inputValue, apiResponse, loading } = this.state;
+    const { inputValue, apiResponse, loading, error } = this.state;
 
     return (
       <div className="search-container">
@@ -69,10 +79,18 @@ class SearchComponent extends Component<{}, SearchComponentState> {
           onKeyDown={this.handleKeyDown}
         />
         <Button onClick={this.handleSearch}>Search</Button>
+
+        <Button onClick={this.simulateError} throwError={this.state.throwError}>
+          Throw Error
+        </Button>
+
         {loading && <Spinner />}
+
+        {error && <div className="error-message">{error}</div>}
+
         <ResponseDisplay apiResponse={apiResponse} loading={loading} />
       </div>
-    );
+    )
   }
 }
 
