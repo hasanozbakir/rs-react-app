@@ -6,9 +6,11 @@
   box-sizing: border-box;
   font-family: "Orbitron", serif;
   color: #FFFFFF;
+  box-sizing: border-box;
 }
 
 h1 {
+  display: inline-block;
   font-size: 3rem;
   margin: 1em auto 2rem;
 }
@@ -18,7 +20,7 @@ h2 {
   margin-bottom: 1rem;
 } 
 
-p,
+.list-title,
 ul > li {
   font-size: 2rem;
   font-weight: 700;
@@ -51,10 +53,9 @@ ul {
 }
 
 .search-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  box-sizing: border-box;
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 .search-input-container {
@@ -64,13 +65,23 @@ ul {
   width: 100%;
 }
 
+.app-container {
+  min-width: 380px;
+  box-sizing: border-box;
+  position: relative;
+  max-width: 840px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 1em;
+}
+
 button {
   font-family: inherit;
   font-weight: 700;
   letter-spacing: 1px;
   font-size: 1.5rem;
-  padding: 1rem 2rem;
-  margin-bottom: 1em;
+  padding: 1em 2em;
+  margin-bottom: 0;
   border-radius: .4em;
   border: none;
   cursor: pointer;  
@@ -79,20 +90,27 @@ button {
 input {
   font-family: inherit;
   background-color: #1E1E1E;
-  font-size: 2rem;
-  min-width: 50%;
+  font-size: 2rem; font-size: 1.5rem;
+  padding: 1em .5em;
   border-radius: .4em;
   color: #FFFFFF;
   border: none;
-  padding: .5em 1em;
-  margin-bottom: 1em;
+  margin-bottom: 0;
+  margin-right: 2em;
+  flex: 1; 
+  min-width: 250px; 
+  max-width: 100%;
 }
 
 .search-btn,
 .load-btn {
-  display: inline-block;
   background-color: #FFE81F; 
   color: #0B3D91; 
+}
+
+.search-btn {
+  flex: 0 0 auto; 
+  width: 200px;
 }
 
 .load-btn {
@@ -101,15 +119,17 @@ input {
 }
 
 .error-btn {
-  display: inline-block;
   background-color: #E83A30; 
   color: #FFFFFF; 
-  position: fixed;
+  position: absolute;
   bottom: 1em;
   right: 1em;
 }
 
 .error-boundary {
+  box-sizing: border-box;
+  min-width: 380px;
+  color: #E83A30;
   align-self: center;
   display: flex;
   flex-direction: column;
@@ -121,4 +141,91 @@ input {
   bottom: 0;
   right: 0;
   margin: auto;
+  padding: 0 1em;
+}
+.error-boundary p {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+
+@media (max-width: 800px) {
+  .search-input-container {
+    gap: 0.5rem; 
+  }
+
+  input {
+    min-width: 150px; 
+  }
+
+  .search-btn{
+    width: 150px; 
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .list-title,
+  ul > li {
+    font-size: 1.5rem;
+  }
+
+  .error-boundary p,
+  button,
+  input {
+    font-size: 1.2rem;
+  }
+
+  ul > li {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 550px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .list-title,
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .error-boundary p,
+  button,
+  input {
+    font-size: 1rem;
+  }
+
+  ul > li {
+    font-size: 0.8rem;
+  }
+  
+}
+
+@media (max-width: 420px) {
+  h1 {
+    font-size: 1.2rem;
+  }
+
+  .error-boundary p,
+  .list-title,
+  h2 {
+    font-size: 1rem;
+  }
+
+  button,
+  input {
+    font-size: 0.8rem;
+  }
+
+  ul > li {
+    font-size: 0.6rem;
+  }
+  
 }
