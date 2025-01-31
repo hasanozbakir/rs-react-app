@@ -73,20 +73,29 @@ class SearchComponent extends Component<{}, SearchComponentState> {
 
     return (
       <div className="search-container">
-        <SearchInput
-          value={inputValue}
-          onChange={this.handleInputChange} 
-          onKeyDown={this.handleKeyDown}
-        />
-        <Button onClick={this.handleSearch}>Search</Button>
+        <div className='search-input-container'>
+          <SearchInput
+            value={inputValue}
+            onChange={this.handleInputChange} 
+            onKeyDown={this.handleKeyDown}
+          />
+          <Button 
+            onClick={this.handleSearch} 
+            className="search-btn">
+              Search
+          </Button>
+        </div>
 
-        <Button onClick={this.simulateError} throwError={this.state.throwError}>
-          Throw Error
+        <Button 
+          onClick={this.simulateError} 
+          throwError={this.state.throwError} 
+          className="error-btn">
+            Generate Error
         </Button>
 
-        {loading && <Spinner />}
+          {loading && <Spinner />}
 
-        {error && <div className="error-message">{error}</div>}
+          {error && <div className="error-message">{error}</div>}
 
         <ResponseDisplay apiResponse={apiResponse} loading={loading} />
       </div>

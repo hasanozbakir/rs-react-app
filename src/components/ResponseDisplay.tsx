@@ -12,7 +12,7 @@ class ResponseDisplay extends Component<ResponseDisplayProps> {
 
     // Display loading message
     if (loading) {
-      return <p>Loading...</p>;
+      return <p className='loading'>Loading...</p>;
     }
 
     // Handle null or undefined apiResponse

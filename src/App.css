@@ -1,7 +1,124 @@
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0 auto;
   text-align: center;
+  box-sizing: border-box;
+  font-family: "Orbitron", serif;
+  color: #FFFFFF;
 }
 
+h1 {
+  font-size: 3rem;
+  margin: 1em auto 2rem;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+} 
+
+p,
+ul > li {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+ul > li {
+  font-weight: 400;
+  font-size: 1.5rem;
+}
+
+.loading {
+  font-size: 1.5rem;
+  align-self: center;
+  margin: 1.5em auto;
+}
+
+span {
+  display: inline-block;
+  margin: 0 0.5rem;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  border-top: #FFE81F 2px solid;
+  padding-top: 1em;
+}
+
+.search-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  margin-bottom: 2rem;
+}
+
+.search-input-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+button {
+  font-family: inherit;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: 1.5rem;
+  padding: 1rem 2rem;
+  margin-bottom: 1em;
+  border-radius: .4em;
+  border: none;
+  cursor: pointer;  
+}
+
+input {
+  font-family: inherit;
+  background-color: #1E1E1E;
+  font-size: 2rem;
+  min-width: 50%;
+  border-radius: .4em;
+  color: #FFFFFF;
+  border: none;
+  padding: .5em 1em;
+  margin-bottom: 1em;
+}
+
+.search-btn,
+.load-btn {
+  display: inline-block;
+  background-color: #FFE81F; 
+  color: #0B3D91; 
+}
+
+.load-btn {
+  align-self: center;
+  margin-top: 1.5em;
+}
+
+.error-btn {
+  display: inline-block;
+  background-color: #E83A30; 
+  color: #FFFFFF; 
+  position: fixed;
+  bottom: 1em;
+  right: 1em;
+}
+
+.error-boundary {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+}
