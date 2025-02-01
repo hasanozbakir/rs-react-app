@@ -1,6 +1,9 @@
 import { ApiResponse } from '../utils/types';
-  
-export const searchApi = async (endpoint: string, query: string): Promise<ApiResponse> => {
+
+export const searchApi = async (
+  endpoint: string,
+  query: string
+): Promise<ApiResponse> => {
   try {
     const response = await fetch(`https://swapi.dev/api/${endpoint}/${query}`);
 
@@ -8,7 +11,8 @@ export const searchApi = async (endpoint: string, query: string): Promise<ApiRes
     if (!response.ok) {
       let errorMessage = 'An error occurred while fetching data.';
       if (response.status >= 400 && response.status < 500) {
-        errorMessage = 'Client error: Invalid request. Please check your input.';
+        errorMessage =
+          'Client error: Invalid request. Please check your input.';
       } else if (response.status >= 500) {
         errorMessage = 'Server error: Please try again later.';
       }
@@ -19,6 +23,6 @@ export const searchApi = async (endpoint: string, query: string): Promise<ApiRes
     return data;
   } catch (error) {
     console.error('Error fetching data:', error);
-    throw error; 
+    throw error;
   }
 };

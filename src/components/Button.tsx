@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 interface ButtonProps {
   onClick: () => void;
   children: React.ReactNode;
-  throwError?: boolean; 
+  throwError?: boolean;
   className?: string;
 }
 

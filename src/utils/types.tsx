@@ -19,7 +19,7 @@ interface People {
   created: string;
   edited: string;
   species: string[];
-  starships: string[]; 
+  starships: string[];
   url: string;
   vehicles: string[];
 }

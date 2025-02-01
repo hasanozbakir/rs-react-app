@@ -1,11 +1,9 @@
 :root {
-  
 }
 
 body {
   margin: 0;
   padding: 0;
-  Background: #0B3D91;
+  background: #0b3d91;
   min-height: 100vh;
 }
-

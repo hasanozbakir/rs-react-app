@@ -10,19 +10,19 @@ interface SearchComponentState {
   inputValue: string;
   apiResponse: ApiResponse | null;
   loading: boolean;
-  error: string | null;  
+  error: string | null;
   throwError: boolean;
 }
 
-class SearchComponent extends Component<{}, SearchComponentState> {
-  constructor(props: {}) {
+class SearchComponent extends Component<object, SearchComponentState> {
+  constructor(props: object) {
     super(props);
 
     // Initialize state with the value from local storage (if it exists)
     const savedSearchTerm = localStorage.getItem('searchTerm') || '';
 
     this.state = {
-      inputValue: savedSearchTerm, 
+      inputValue: savedSearchTerm,
       apiResponse: null,
       loading: false,
       error: null,
@@ -32,12 +32,12 @@ class SearchComponent extends Component<{}, SearchComponentState> {
 
   handleInputChange = (value: string) => {
     this.setState({ inputValue: value });
-    localStorage.setItem('searchTerm', value); 
+    localStorage.setItem('searchTerm', value);
   };
 
   handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      this.handleSearch(); 
+      this.handleSearch();
     }
   };
 
@@ -73,33 +73,32 @@ class SearchComponent extends Component<{}, SearchComponentState> {
 
     return (
       <div className="search-container">
-        <div className='search-input-container'>
+        <div className="search-input-container">
           <SearchInput
             value={inputValue}
-            onChange={this.handleInputChange} 
+            onChange={this.handleInputChange}
             onKeyDown={this.handleKeyDown}
           />
-          <Button 
-            onClick={this.handleSearch} 
-            className="search-btn">
-              Search
+          <Button onClick={this.handleSearch} className="search-btn">
+            Search
           </Button>
         </div>
 
-        <Button 
-          onClick={this.simulateError} 
-          throwError={this.state.throwError} 
-          className="error-btn">
-            Generate Error
+        <Button
+          onClick={this.simulateError}
+          throwError={this.state.throwError}
+          className="error-btn"
+        >
+          Generate Error
         </Button>
 
-          {loading && <Spinner />}
+        {loading && <Spinner />}
 
-          {error && <div className="error-message">{error}</div>}
+        {error && <div className="error-message">{error}</div>}
 
         <ResponseDisplay apiResponse={apiResponse} loading={loading} />
       </div>
-    )
+    );
   }
 }
 

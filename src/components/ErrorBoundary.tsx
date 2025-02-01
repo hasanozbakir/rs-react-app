@@ -33,13 +33,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     if (hasError) {
       return (
         <div className="error-boundary">
-            <h2>Something went wrong.</h2>
-            <p>{error?.message}</p>
-            <button 
-                className='load-btn' 
-                onClick={() => window.location.reload()}
-                >Reload Page
-            </button>
+          <h2>Something went wrong.</h2>
+          <p>{error?.message}</p>
+          <button className="load-btn" onClick={() => window.location.reload()}>
+            Reload Page
+          </button>
         </div>
       );
     }
