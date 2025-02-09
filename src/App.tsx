@@ -1,21 +1,28 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
-import Home from './pages/Home';
+import Main from './pages/Main';
 import Details from './pages/Details';
 import NotFound from './pages/NotFound';
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <ErrorBoundary>
+    <ErrorBoundary>
+      <Router
+        future={{
+          v7_startTransition: true, 
+          v7_relativeSplatPath: true, 
+        }}
+      >
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/details/:id" element={<Details />} />
+          <Route path="/" element={<Main />}>
+            <Route path="details/:id" element={<Details />} />
+          </Route>
+          <Route path="/not-found" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </ErrorBoundary>
-    </Router>
+      </Router>
+    </ErrorBoundary>
   );
 };
 

@@ -1,5 +1,6 @@
-import React, { Component, ReactNode } from 'react';
-import './ErrorBoundary.css';
+import { Component, ErrorInfo, ReactNode } from 'react';
+import styles from './ErrorBoundary.module.css';
+
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -13,39 +14,79 @@ interface ErrorBoundaryState {
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-    };
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by ErrorBoundary:', error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
 
   render() {
-    const { hasError, error } = this.state;
-    const { children } = this.props;
-
-    if (hasError) {
-      console.log('ErrorBoundary fallback UI rendered');
+        
+    if (this.state.hasError) {
       return (
-        <div className="error-boundary">
+        <div className={styles['error-boundary']}>
           <h2>Something went wrong.</h2>
-          <p>{error?.message}</p>
-          <button type='button' className="reload-button" onClick={() => window.location.reload()}>
+          <p>{this.state.error?.message}</p>
+          <button type='button' className={styles['reload-button']} onClick={() => window.location.reload()}>
             Reload Page
-          </button>
+          </button>      
         </div>
       );
     }
 
-    return children;
+    return this.props.children;
   }
 }
 
 export default ErrorBoundary;
+
+
+
+
+// interface ErrorBoundaryProps {
+//   children: ReactNode;
+// }
+
+// interface ErrorBoundaryState {
+//   hasError: boolean;
+//   error: Error | null;
+// }
+
+// class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+//   constructor(props: ErrorBoundaryProps) {
+//     super(props);
+//     this.state = {
+//       hasError: false,
+//       error: null,
+//     };
+//   }
+
+//   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+//     return { hasError: true, error };
+//   }
+
+//   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+//     console.error('Error caught by ErrorBoundary:', error, errorInfo);
+//   }
+
+//   render() {
+//     const { hasError, error } = this.state;
+//     const { children } = this.props;
+
+//     if (hasError) {
+//       console.log('ErrorBoundary fallback UI rendered');
+//       return (
+        
+//       );
+//     }
+
+//     return children;
+//   }
+// }
+
+// export default ErrorBoundary;

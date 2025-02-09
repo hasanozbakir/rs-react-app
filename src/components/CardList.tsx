@@ -1,23 +1,19 @@
 import React from 'react';
 import Card from './Card';
-import Pagination from './Pagination';
 import { Person } from '../utils/types';
-import './CardList.css'
+import styles from './CardList.module.css';
 
 interface CardListProps {
-  results: Person[];
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
+  people: Person[];
+  onPersonClick: (person: Person) => void;
 }
 
-const CardList: React.FC<CardListProps> = ({ results, currentPage, totalPages, onPageChange }) => {
+const CardList: React.FC<CardListProps> = ({ people, onPersonClick }) => {
   return (
-    <div>
-      {results.map((person) => (
-        <Card key={person.url} person={person} />
+    <div className={styles['card-list']}>
+      {people.map((person) => (
+        <Card key={person.url} person={person} onClick={() => onPersonClick(person)} />
       ))}
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
     </div>
   );
 };

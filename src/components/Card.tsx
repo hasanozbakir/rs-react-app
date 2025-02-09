@@ -1,28 +1,18 @@
 import React from 'react';
 import { Person } from '../utils/types';
-import { useNavigate } from 'react-router-dom';
-import { extractIdFromUrl } from '../utils/helpers';
-import './CardList.css'
+import styles from './Card.module.css';
 
 interface CardProps {
   person: Person;
+  onClick: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ person }) => {
-  const navigate = useNavigate();
-  const personId = extractIdFromUrl(person.url);
-
-  const handleClick = () => {
-    if (personId) {
-      navigate(`/details/${personId}`); 
-    }
-  };
-
+const Card: React.FC<CardProps> = ({ person, onClick }) => {
   return (
-    <div onClick={handleClick}>
+    <div onClick={onClick} className={styles.card}>
       <h3>{person.name}</h3>
-      <p>Height: {person.height}</p>
-      <p>Mass: {person.mass}</p>
+      <p>{person.birth_year}</p>
+      <p>{person.gender}</p>
     </div>
   );
 };
