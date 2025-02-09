@@ -21,7 +21,9 @@ const Search: React.FC<SearchProps> = ({ onSearch }) => {
         aria-label="Search for people"
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button type='button' onClick={handleSearch} className={styles.button}>Search</button>
+      <button type="button" onClick={handleSearch} className={styles.button}>
+        Search
+      </button>
     </div>
   );
 };

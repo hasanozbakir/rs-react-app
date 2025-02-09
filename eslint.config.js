@@ -16,6 +16,15 @@ export default tseslint.config(
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      overrides: [
+        {
+          files: ['tests/**/*'],
+          plugins: ['jest'],
+          env: {
+            'jest/globals': true,
+          },
+        },
+      ],
     },
     rules: {
       ...reactHooks.configs.recommended.rules,

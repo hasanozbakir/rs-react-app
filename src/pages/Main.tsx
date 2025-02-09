@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate, Outlet } from 'react-router-dom';
 import Search from '../components/Search';
 import CardList from '../components/CardList';
@@ -11,22 +11,22 @@ import styles from './Main.module.css';
 const Main: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get('search') || ''
+  );
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchData();
-  }, [searchTerm, page]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch(`https://swapi.dev/api/people/?search=${searchTerm}&page=${page}`);
+      const response = await fetch(
+        `https://swapi.dev/api/people/?search=${searchTerm}&page=${page}`
+      );
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -44,7 +44,6 @@ const Main: React.FC = () => {
       }
 
       setData(result);
-
     } catch (err) {
       console.error('Error fetching data:', err);
       setError('Failed to fetch data. Please try again later.');
@@ -52,7 +51,11 @@ const Main: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm, page, navigate]); 
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]); 
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -66,7 +69,9 @@ const Main: React.FC = () => {
   };
 
   const handlePersonClick = (person: Person) => {
-    navigate(`details/${person.url.split('/').slice(-2, -1)[0]}`, { state: { person } });
+    navigate(`details/${person.url.split('/').slice(-2, -1)[0]}`, {
+      state: { person },
+    });
   };
 
   return (
@@ -82,14 +87,21 @@ const Main: React.FC = () => {
           ) : data?.results.length === 0 ? (
             <p>There is no one. Try again.</p>
           ) : (
-            <CardList people={data?.results || []} onPersonClick={handlePersonClick} />
+            <CardList
+              people={data?.results || []}
+              onPersonClick={handlePersonClick}
+            />
           )}
           <Outlet />
         </div>
-          {data && data.results.length > 0 && (
-            <Pagination currentPage={page} totalPages={Math.ceil(data.count / 10)} onPageChange={handlePageChange} />
-          )}
-          <ErrorButton /> 
+        {data && data.results.length > 0 && (
+          <Pagination
+            currentPage={page}
+            totalPages={Math.ceil(data.count / 10)}
+            onPageChange={handlePageChange}
+          />
+        )}
+        <ErrorButton />
       </div>
     </>
   );

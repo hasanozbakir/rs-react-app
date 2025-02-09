@@ -1,12 +1,9 @@
 .main,
 .main-container {
-    display: flex;
-}  
-
-.main {
-    flex-direction: column;
-    gap: 20px;
+  display: flex;
 }
 
-
-
+.main {
+  flex-direction: column;
+  gap: 20px;
+}

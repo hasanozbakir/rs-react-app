@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 import Main from './pages/Main';
-import Details from './pages/Details';
+import Details from './components/Details';
 import NotFound from './pages/NotFound';
 
 const App: React.FC = () => {
@@ -10,8 +10,8 @@ const App: React.FC = () => {
     <ErrorBoundary>
       <Router
         future={{
-          v7_startTransition: true, 
-          v7_relativeSplatPath: true, 
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
         }}
       >
         <Routes>

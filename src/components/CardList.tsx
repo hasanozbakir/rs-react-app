@@ -12,7 +12,11 @@ const CardList: React.FC<CardListProps> = ({ people, onPersonClick }) => {
   return (
     <div className={styles['card-list']}>
       {people.map((person) => (
-        <Card key={person.url} person={person} onClick={() => onPersonClick(person)} />
+        <Card
+          key={person.url}
+          person={person}
+          onClick={() => onPersonClick(person)}
+        />
       ))}
     </div>
   );
