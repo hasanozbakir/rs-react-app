@@ -6,6 +6,7 @@ import Pagination from '../components/Pagination';
 import Spinner from '../components/Spinner';
 import ErrorButton from '../components/ErrorButton.';
 import { ApiResponse, Person } from '../utils/types';
+import { useTheme } from '../App';
 import styles from './Main.module.css';
 
 const Main: React.FC = () => {
@@ -18,6 +19,8 @@ const Main: React.FC = () => {
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const { theme } = useTheme()
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -78,7 +81,7 @@ const Main: React.FC = () => {
     <>
       <h1>SWAPI API People Search</h1>
       <Search onSearch={handleSearch} />
-      <div className={styles.main}>
+      <div className={`${styles.main} ${styles[theme]}`}>
         <div className={styles['main-container']}>
           {loading ? (
             <Spinner />

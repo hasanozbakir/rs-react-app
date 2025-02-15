@@ -26,3 +26,13 @@
 .title {
   margin-top: 0;
 }
+
+.light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.dark {
+  background-color: #333333;
+  color: #ffffff;
+}

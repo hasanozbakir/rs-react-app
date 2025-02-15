@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback  } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Person } from '../utils/types';
 import Spinner from './Spinner';
+import { useTheme } from '../App';
 import styles from './Details.module.css';
 
 const Details: React.FC = () => {
@@ -10,6 +11,7 @@ const Details: React.FC = () => {
   const location = useLocation();
   const [person, setPerson] = useState<Person | null>(location.state?.person || null);
   const [loading, setLoading] = useState(!location.state?.person);
+  const { theme } = useTheme();
 
   const fetchPersonDetails = useCallback(async () => {
     setLoading(true);
@@ -45,7 +47,7 @@ const Details: React.FC = () => {
   }
 
   return (
-    <div className={styles.panel}>
+    <div className={`${styles.panel} ${styles[theme]}`}>
       <button
         type="button"
         className={styles.closeButton}

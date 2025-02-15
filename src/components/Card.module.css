@@ -1,4 +1,7 @@
 .card {
+  flex: 1 1 250px; 
+  max-width: 350px; 
+  height: 250px;
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -25,4 +28,14 @@
   margin: 5px 0;
   font-size: 14px;
   color: #666;
+}
+
+.light {
+  /* background-color: #ffffff; */
+  color: #000000;
+}
+
+.dark {
+  background-color: #333333;
+  color: #ffffff;
 }
