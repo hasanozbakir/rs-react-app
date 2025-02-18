@@ -1,4 +1,3 @@
-import React from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import styles from './Search.module.css';
 
@@ -6,7 +5,7 @@ interface SearchProps {
   onSearch: (term: string) => void;
 }
 
-const Search: React.FC<SearchProps> = ({ onSearch }) => {
+const Search = ({ onSearch }: SearchProps) => {
   const [searchTerm, setSearchTerm] = useLocalStorage('searchTerm', '');
 
   const handleSearch = () => {

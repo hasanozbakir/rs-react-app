@@ -1,44 +1,31 @@
-import React, { useEffect, useState, useCallback  } from 'react';
+import React from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Person } from '../utils/types';
+import { useGetPersonQuery } from '../features/api/apiSlice';
 import Spinner from './Spinner';
-import { useTheme } from '../App';
 import styles from './Details.module.css';
+import { useTheme } from '../utils/themeContext';
 
 const Details: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const [person, setPerson] = useState<Person | null>(location.state?.person || null);
-  const [loading, setLoading] = useState(!location.state?.person);
   const { theme } = useTheme();
 
-  const fetchPersonDetails = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`https://swapi.dev/api/people/${id}/`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch person details');
-      }
-      const result: Person = await response.json();
-      setPerson(result);
-    } catch (err) {
-      console.error('Error fetching person details:', err);
-      navigate('/not-found', { replace: true });
-    } finally {
-      setLoading(false);
-    }
-  }, [id, navigate]); 
+  const initialData = location.state?.person;
+  const fromPage = location.state?.from || '/';
 
-  useEffect(() => {
-    const shouldFetch = !person || (person.url && !person.url.includes(`/people/${id}/`));
-    if (shouldFetch) {
-      fetchPersonDetails();
-    }
-  }, [id, person, fetchPersonDetails]); 
+  const {
+    data: freshData,
+    isLoading,
+    isError,
+  } = useGetPersonQuery(id || '', {
+    skip: !id,
+  });
+
+  const person = initialData || freshData;
 
   const handleClose = () => {
-    navigate(-1);
+    navigate(fromPage);
   };
 
   if (!id) {
@@ -48,15 +35,14 @@ const Details: React.FC = () => {
 
   return (
     <div className={`${styles.panel} ${styles[theme]}`}>
-      <button
-        type="button"
-        className={styles.closeButton}
-        onClick={handleClose}
-      >
+      <button className={styles.closeButton} onClick={handleClose}>
         Close
       </button>
-      {loading ? (
+
+      {isLoading ? (
         <Spinner />
+      ) : isError ? (
+        <p>Error loading details</p>
       ) : person ? (
         <>
           <h2 className={styles.title}>{person.name}</h2>
@@ -65,10 +51,12 @@ const Details: React.FC = () => {
             <p>Mass: {person.mass}</p>
             <p>Gender: {person.gender}</p>
             <p>Birth Year: {person.birth_year}</p>
+            <p>Hair Color: {person.hair_color}</p>
+            <p>Skin Color: {person.skin_color}</p>
           </div>
         </>
       ) : (
-        <p>No details available.</p>
+        <p>No details available</p>
       )}
     </div>
   );

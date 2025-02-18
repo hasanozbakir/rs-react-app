@@ -1,34 +1,44 @@
-import React from 'react';
-import { useTheme } from '../App';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import {
+  selectCurrentPage,
+  setCurrentPage,
+  selectItemsPerPage,
+} from '../features/pagination/paginationSlice';
+import { useTheme } from '../utils/themeContext';
 import styles from './Pagination.module.css';
 
 interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
+  totalItems: number;
 }
 
-const Pagination: React.FC<PaginationProps> = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-}) => {
-  const { theme } = useTheme()
+const Pagination = ({ totalItems }: PaginationProps) => {
+  const { theme } = useTheme();
+  const dispatch = useAppDispatch();
+  const currentPage = useAppSelector(selectCurrentPage);
+  const itemsPerPage = useAppSelector(selectItemsPerPage);
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handlePageChange = (page: number) => {
+    dispatch(setCurrentPage(page));
+  };
 
   return (
     <div className={`${styles.pagination} ${styles[theme]}`}>
       <button
         type="button"
         disabled={currentPage === 1}
-        onClick={() => onPageChange(currentPage - 1)}
+        onClick={() => handlePageChange(currentPage - 1)}
       >
         Previous
       </button>
-      <span>{currentPage}</span>
+      <span>
+        Page {currentPage} of {totalPages}
+      </span>
       <button
         type="button"
         disabled={currentPage === totalPages}
-        onClick={() => onPageChange(currentPage + 1)}
+        onClick={() => handlePageChange(currentPage + 1)}
       >
         Next
       </button>
