@@ -1,4 +1,4 @@
-import { useTheme, THEME_CONSTANT_DARK } from '../utils/themeContext';
+import { useTheme, THEME_CONSTANT_DARK } from '../../utils/themeContext';
 import styles from './ThemeButton.module.css';
 
 const ThemeButton = () => {
@@ -16,6 +16,7 @@ const ThemeButton = () => {
           type={'checkbox'}
           name={'theme'}
           title="Theme Toggle"
+          aria-label="Theme Toggle"
           checked={theme === THEME_CONSTANT_DARK}
           onChange={handleChange}
         />

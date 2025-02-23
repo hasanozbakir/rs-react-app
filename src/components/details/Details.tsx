@@ -1,11 +1,10 @@
-import React from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useGetPersonQuery } from '../features/api/apiSlice';
-import Spinner from './Spinner';
+import { useTheme } from '../../utils/themeContext';
+import { useGetPersonQuery } from '../../features/api/apiSlice';
+import Spinner from '../spinner/Spinner';
 import styles from './Details.module.css';
-import { useTheme } from '../utils/themeContext';
 
-const Details: React.FC = () => {
+const Details = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -34,7 +33,7 @@ const Details: React.FC = () => {
   }
 
   return (
-    <div className={`${styles.panel} ${styles[theme]}`}>
+    <div className={`${styles.panel} ${styles[theme]}`} data-testid="details">
       <button className={styles.closeButton} onClick={handleClose}>
         Close
       </button>

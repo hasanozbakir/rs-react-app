@@ -1,4 +1,4 @@
-import useLocalStorage from '../hooks/useLocalStorage';
+import useLocalStorage from '../../hooks/useLocalStorage';
 import styles from './Search.module.css';
 
 interface SearchProps {

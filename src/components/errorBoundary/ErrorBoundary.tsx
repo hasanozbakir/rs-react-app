@@ -20,6 +20,12 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     return { hasError: true, error };
   }
 
+  componentDidUpdate(prevProps: ErrorBoundaryProps) {
+    if (prevProps.children !== this.props.children) {
+      this.setState({ hasError: false });
+    }
+  }
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
   }
@@ -27,13 +33,14 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className={styles['error-boundary']}>
+        <div className={styles['error-boundary']} data-testid="error-boundary">
           <h2>Something went wrong.</h2>
-          <p>{this.state.error?.message}</p>
+          <p data-testid="error-message">{this.state.error?.message}</p>
           <button
             type="button"
             className={styles['reload-button']}
             onClick={() => window.location.reload()}
+            data-testid="reload-button"
           >
             Reload Page
           </button>

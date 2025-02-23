@@ -1,10 +1,10 @@
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { useTheme } from '../../utils/themeContext';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   selectCurrentPage,
   setCurrentPage,
   selectItemsPerPage,
-} from '../features/pagination/paginationSlice';
-import { useTheme } from '../utils/themeContext';
+} from '../../features/pagination/paginationSlice';
 import styles from './Pagination.module.css';
 
 interface PaginationProps {
@@ -24,7 +24,10 @@ const Pagination = ({ totalItems }: PaginationProps) => {
   };
 
   return (
-    <div className={`${styles.pagination} ${styles[theme]}`}>
+    <div
+      className={`${styles.pagination} ${styles[theme]}`}
+      data-testid="pagination"
+    >
       <button
         type="button"
         disabled={currentPage === 1}

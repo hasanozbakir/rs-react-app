@@ -1,10 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import ErrorBoundary from './components/ErrorBoundary';
+import { Routes, Route } from 'react-router-dom';
+import { ROUTES } from './utils/routes';
 import { useTheme } from './utils/themeContext';
-import Main from './pages/Main';
-import Details from './components/Details';
-import NotFound from './pages/NotFound';
-import ThemeButton from './components/ThemeButton';
+import ErrorBoundary from './components/errorBoundary/ErrorBoundary';
+import Main from './pages/main/Main';
+import NotFound from './pages/notFound/NotFound';
+import Details from './components/details/Details';
+import ThemeButton from './components/themeButton/ThemeButton';
 import './App.css';
 
 const App = () => {
@@ -14,15 +15,12 @@ const App = () => {
     <div className={`app-container ${theme}`}>
       <ErrorBoundary>
         <ThemeButton />
-        <Router>
-          <Routes>
-            <Route path="/" element={<Main />}>
-              <Route path="details/:id" element={<Details />} />
-            </Route>
-            <Route path="/not-found" element={<NotFound />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Router>
+        <Routes>
+          <Route path={ROUTES.HOME} element={<Main />}>
+            <Route path={ROUTES.DETAILS} element={<Details />} />
+          </Route>
+          <Route path={ROUTES.NOT_FOUND} element={<NotFound />} />
+        </Routes>
       </ErrorBoundary>
     </div>
   );

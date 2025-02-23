@@ -1,6 +1,6 @@
-import { Person } from '../utils/types';
-import { SelectedItem } from '../features/selectedItems/selectedItemsSlice';
-import { useTheme } from '../utils/themeContext';
+import { useTheme } from '../../utils/themeContext';
+import { Person } from '../../utils/types';
+import { SelectedItem } from '../../features/selectedItems/selectedItemsSlice';
 import styles from './Card.module.css';
 
 interface CardProps {

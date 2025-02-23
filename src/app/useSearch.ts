@@ -5,9 +5,11 @@ import { setCurrentPage } from '../features/pagination/paginationSlice';
 export const useSearch = () => {
   const dispatch = useAppDispatch();
 
-  const handleSearch = (term: string) => {
+  const handleSearch = (term: string, resetPage = true) => {
     dispatch(setSearchTerm(term));
-    dispatch(setCurrentPage(1));
+    if (resetPage) {
+      dispatch(setCurrentPage(1));
+    }
   };
 
   return { handleSearch };

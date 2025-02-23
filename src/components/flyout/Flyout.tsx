@@ -1,8 +1,8 @@
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import {
   clearSelectedItems,
   selectSelectedItems,
-} from '../features/selectedItems/selectedItemsSlice';
+} from '../../features/selectedItems/selectedItemsSlice';
 import styles from './Flyout.module.css';
 
 const Flyout = () => {

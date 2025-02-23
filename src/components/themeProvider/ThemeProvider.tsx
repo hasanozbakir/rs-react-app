@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ThemeContext, {
   THEME_CONSTANT_DARK,
   THEME_CONSTANT_LIGHT,
-} from '../utils/themeContext';
+} from '../../utils/themeContext';
 
 interface ThemeContextType {
   theme: string;
@@ -16,7 +16,7 @@ interface ThemeProviderProps {
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
-    return savedTheme ? savedTheme : 'light';
+    return savedTheme ? savedTheme : THEME_CONSTANT_LIGHT;
   });
 
   useEffect(() => {
