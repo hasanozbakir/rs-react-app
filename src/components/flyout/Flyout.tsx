@@ -1,4 +1,4 @@
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux-store/hooks';
 import {
   clearSelectedItems,
   selectSelectedItems,
@@ -14,14 +14,23 @@ const Flyout = () => {
 
     const csvContent = [
       ['Name', 'Birth Year', 'Gender', 'Height', 'Mass', 'URL'],
-      ...selectedItems.map((item) => [
-        item.name,
-        item.birth_year,
-        item.gender,
-        item.height,
-        item.mass,
-        item.url,
-      ]),
+      ...selectedItems.map(
+        (item: {
+          name: string;
+          birth_year: string;
+          gender: string;
+          height: string;
+          mass: string;
+          url: string;
+        }) => [
+          item.name,
+          item.birth_year,
+          item.gender,
+          item.height,
+          item.mass,
+          item.url,
+        ]
+      ),
     ]
       .map((row) => row.join(','))
       .join('\n');
@@ -43,12 +52,19 @@ const Flyout = () => {
   return (
     <div className={styles.flyout}>
       <div className={styles['flyout-content']}>
-        <span>{selectedItems.length} items selected</span>
+        <span data-testid="items-selected">
+          {selectedItems.length} items selected
+        </span>
         <div className={styles['flyout-actions']}>
-          <button onClick={() => dispatch(clearSelectedItems())}>
+          <button
+            data-testid="unselect-all-button"
+            onClick={() => dispatch(clearSelectedItems())}
+          >
             Unselect All
           </button>
-          <button onClick={handleDownload}>Download CSV</button>
+          <button data-testid="download-csv-button" onClick={handleDownload}>
+            Download CSV
+          </button>
         </div>
       </div>
     </div>

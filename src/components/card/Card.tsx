@@ -12,32 +12,43 @@ interface CardProps {
 
 const Card = ({ person, isSelected, onSelect, onClick }: CardProps) => {
   const { theme } = useTheme();
+  const { url, name, birth_year, gender, height, mass } = person;
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
+
     onSelect({
-      url: person.url,
-      name: person.name,
-      birth_year: person.birth_year,
-      gender: person.gender,
-      height: person.height,
-      mass: person.mass,
+      url,
+      name,
+      birth_year,
+      gender,
+      height,
+      mass,
     });
   };
 
   return (
-    <div onClick={onClick} className={`${styles.card} ${styles[theme]}`}>
+    <div
+      onClick={onClick}
+      className={`${styles.card} ${styles[theme]}`}
+      data-testid="card"
+    >
       <input
         type="checkbox"
-        aria-label="chech-box"
+        aria-label={`Select ${person.name}`}
         checked={isSelected}
         onChange={handleCheckboxChange}
         onClick={(e) => e.stopPropagation()}
       />
-      <h2>Select {person.name}</h2>
-      <h3>{person.name}</h3>
-      <p>{person.birth_year}</p>
-      <p>{person.gender}</p>
+      <h2>Select {name}</h2>
+      <h3>{name}</h3>
+      <p>{birth_year}</p>
+      <p>{gender}</p>
+      <p
+        aria-label={`${person.name} ${isSelected ? 'Selected' : 'Not Selected'}`}
+      >
+        {isSelected ? 'Selected' : 'Not Selected'}
+      </p>
     </div>
   );
 };

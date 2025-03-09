@@ -1,14 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import type { RootState } from '../../app/store';
+import type { RootState } from '../../redux-store/store';
 
 export interface PaginationState {
-  // totalPages: number;
   currentPage: number;
   itemsPerPage: number;
 }
 
 const initialState: PaginationState = {
-  // totalPages: 1,
   currentPage: 1,
   itemsPerPage: 10,
 };

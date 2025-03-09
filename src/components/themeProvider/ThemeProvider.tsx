@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ThemeContext, {
   THEME_CONSTANT_DARK,
   THEME_CONSTANT_LIGHT,
@@ -14,17 +14,10 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const [theme, setTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme ? savedTheme : THEME_CONSTANT_LIGHT;
-  });
-
-  useEffect(() => {
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+  const [theme, setTheme] = useState('light');
 
   const toggleTheme = () => {
-    setTheme((prevTheme) =>
+    setTheme((prevTheme: string) =>
       prevTheme === THEME_CONSTANT_LIGHT
         ? THEME_CONSTANT_DARK
         : THEME_CONSTANT_LIGHT

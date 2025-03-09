@@ -1,4 +1,4 @@
-import useLocalStorage from '../../hooks/useLocalStorage';
+import useLocalStorage from '@/hooks/useLocalStorage';
 import styles from './Search.module.css';
 
 interface SearchProps {
@@ -6,21 +6,21 @@ interface SearchProps {
 }
 
 const Search = ({ onSearch }: SearchProps) => {
-  const [searchTerm, setSearchTerm] = useLocalStorage('searchTerm', '');
+  const [search, setSearch] = useLocalStorage('searchTerm', '');
 
   const handleSearch = () => {
-    onSearch(searchTerm.trim());
+    onSearch(search.trim());
   };
 
   return (
     <div className={styles.container}>
       <input
         type="text"
-        value={searchTerm}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         aria-label="Search for people"
-        onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <button type="button" onClick={handleSearch} className={styles.button}>
+      <button type="button" onClick={handleSearch}>
         Search
       </button>
     </div>

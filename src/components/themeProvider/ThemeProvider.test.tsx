@@ -56,18 +56,6 @@ describe('ThemeProvider Component', () => {
     expect(screen.getByTestId('theme')).toHaveTextContent(THEME_CONSTANT_LIGHT);
   });
 
-  it('sets the initial theme to the value stored in local storage', () => {
-    localStorageMock.getItem.mockReturnValue(THEME_CONSTANT_DARK);
-
-    render(
-      <ThemeProvider>
-        <TestComponent />
-      </ThemeProvider>
-    );
-
-    expect(screen.getByTestId('theme')).toHaveTextContent(THEME_CONSTANT_DARK);
-  });
-
   it('toggles the theme between light and dark', () => {
     localStorageMock.getItem.mockReturnValue(THEME_CONSTANT_LIGHT);
 
@@ -86,26 +74,5 @@ describe('ThemeProvider Component', () => {
     fireEvent.click(screen.getByTestId('toggle-theme'));
 
     expect(screen.getByTestId('theme')).toHaveTextContent(THEME_CONSTANT_LIGHT);
-  });
-
-  it('persists the theme in local storage when it changes', () => {
-    localStorageMock.getItem.mockReturnValue(THEME_CONSTANT_LIGHT);
-
-    render(
-      <ThemeProvider>
-        <TestComponent />
-      </ThemeProvider>
-    );
-
-    expect(screen.getByTestId('theme')).toHaveTextContent(THEME_CONSTANT_LIGHT);
-
-    fireEvent.click(screen.getByTestId('toggle-theme'));
-
-    expect(screen.getByTestId('theme')).toHaveTextContent(THEME_CONSTANT_DARK);
-
-    expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      'theme',
-      THEME_CONSTANT_DARK
-    );
   });
 });

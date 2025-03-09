@@ -4,8 +4,8 @@ import searchTermReducer, {
   clearSearchTerm,
   selectSearchTerm,
 } from './searchTermSlice';
-import { describe, it, expect } from 'vitest';
-import type { RootState } from '../../app/store';
+import { describe, it, expect, beforeEach } from 'vitest';
+import type { RootState } from '../../redux-store/store';
 
 describe('searchTermSlice', () => {
   let store: ReturnType<typeof configureStore>;
@@ -25,35 +25,20 @@ describe('searchTermSlice', () => {
     expect(state.search.searchTerm).toBe('');
   });
 
-  it('should load the search term from localStorage on initialization', () => {
-    localStorage.setItem('lastSearchTerm', 'Luke');
-
-    store = configureStore({
-      reducer: {
-        search: searchTermReducer,
-      },
-    });
+  it('should select the search term from the state', () => {
+    store.dispatch(setSearchTerm('Leia'));
 
     const state = store.getState() as RootState;
-    expect(state.search.searchTerm).toBe('');
+    const selectedSearchTerm = selectSearchTerm(state);
+    expect(selectedSearchTerm).toBe('Leia');
   });
-
-  it('should update the search term and save it to localStorage', () => {
-    store.dispatch(setSearchTerm('Darth Vader'));
-
-    const state = store.getState() as RootState;
-    expect(state.search.searchTerm).toBe('Darth Vader');
-    expect(localStorage.getItem('lastSearchTerm')).toBe('Darth Vader');
-  });
-
-  it('should clear the search term and remove it from localStorage', () => {
+  it('should clear the search term in the state', () => {
     store.dispatch(setSearchTerm('Yoda'));
 
     store.dispatch(clearSearchTerm());
 
     const state = store.getState() as RootState;
     expect(state.search.searchTerm).toBe('');
-    expect(localStorage.getItem('lastSearchTerm')).toBeNull();
   });
 
   it('should select the search term from the state', () => {

@@ -6,7 +6,7 @@ import selectedItemsSliceReducer, {
   SelectedItem,
 } from './selectedItemsSlice';
 import { describe, it, expect } from 'vitest';
-import type { RootState } from '../../app/store';
+import type { RootState } from '../../redux-store/store';
 import { allPeopleResults } from '../../mocks/testData';
 import { Person } from '../../utils/types';
 
@@ -36,7 +36,7 @@ describe('selectedItemsSlice', () => {
   });
 
   it('should add an item to selectedItems if it is not already selected', () => {
-    const item = mapToSelectedItem(allPeopleResults[0]); // Use allPeopleResults[0]
+    const item = mapToSelectedItem(allPeopleResults[0]);
 
     store.dispatch(toggleItemSelection(item));
 
@@ -45,7 +45,7 @@ describe('selectedItemsSlice', () => {
   });
 
   it('should remove an item from selectedItems if it is already selected', () => {
-    const item = mapToSelectedItem(allPeopleResults[0]); // Use allPeopleResults[0]
+    const item = mapToSelectedItem(allPeopleResults[0]);
 
     store.dispatch(toggleItemSelection(item));
 

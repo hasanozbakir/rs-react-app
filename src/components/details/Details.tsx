@@ -1,62 +1,55 @@
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useTheme } from '../../utils/themeContext';
-import { useGetPersonQuery } from '../../features/api/apiSlice';
-import Spinner from '../spinner/Spinner';
+import { useRouter } from 'next/router';
+import { useGetPersonQuery } from '@/features/api/apiSlice';
+import { Person } from '../../utils/types';
+import { useTheme } from '@/utils/themeContext';
 import styles from './Details.module.css';
 
 const Details = () => {
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const fromPage = '/';
   const { theme } = useTheme();
-
-  const initialData = location.state?.person;
-  const fromPage = location.state?.from || '/';
+  const { id } = router.query as { id: string };
 
   const {
     data: freshData,
     isLoading,
     isError,
-  } = useGetPersonQuery(id || '', {
+  } = useGetPersonQuery(id, {
     skip: !id,
   });
-
-  const person = initialData || freshData;
-
-  const handleClose = () => {
-    navigate(fromPage);
-  };
+  const person: Person | undefined = freshData;
 
   if (!id) {
-    navigate('/not-found', { replace: true });
+    router.replace('/not-found');
     return null;
   }
 
+  const handleClose = () => {
+    router.push(fromPage).catch((error) => {
+      console.error('Navigation error:', error);
+    });
+  };
+
   return (
     <div className={`${styles.panel} ${styles[theme]}`} data-testid="details">
-      <button className={styles.closeButton} onClick={handleClose}>
+      <button
+        type="button"
+        className={styles.closeButton}
+        onClick={handleClose}
+      >
         Close
       </button>
-
-      {isLoading ? (
-        <Spinner />
-      ) : isError ? (
-        <p>Error loading details</p>
-      ) : person ? (
-        <>
-          <h2 className={styles.title}>{person.name}</h2>
-          <div className={styles.details}>
-            <p>Height: {person.height}</p>
-            <p>Mass: {person.mass}</p>
-            <p>Gender: {person.gender}</p>
-            <p>Birth Year: {person.birth_year}</p>
-            <p>Hair Color: {person.hair_color}</p>
-            <p>Skin Color: {person.skin_color}</p>
-          </div>
-        </>
-      ) : (
-        <p>No details available</p>
-      )}
+      <>
+        <h2 className={styles.title}>{person?.name}</h2>
+        <div className={styles.details}>
+          <p>Height: {person?.height}</p>
+          <p>Mass: {person?.mass}</p>
+          <p>Gender: {person?.gender}</p>
+          <p>Birth Year: {person?.birth_year}</p>
+          <p>Hair Color: {person?.hair_color}</p>
+          <p>Skin Color: {person?.skin_color}</p>
+        </div>
+      </>
     </div>
   );
 };

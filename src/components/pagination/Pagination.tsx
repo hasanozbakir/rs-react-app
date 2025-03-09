@@ -1,10 +1,10 @@
 import { useTheme } from '../../utils/themeContext';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { useAppDispatch, useAppSelector } from '../../redux-store/hooks';
 import {
-  selectCurrentPage,
   setCurrentPage,
   selectItemsPerPage,
 } from '../../features/pagination/paginationSlice';
+import { useRouter } from 'next/router';
 import styles from './Pagination.module.css';
 
 interface PaginationProps {
@@ -13,14 +13,23 @@ interface PaginationProps {
 
 const Pagination = ({ totalItems }: PaginationProps) => {
   const { theme } = useTheme();
+  const router = useRouter();
   const dispatch = useAppDispatch();
-  const currentPage = useAppSelector(selectCurrentPage);
+  const currentPage: number = parseInt(router.query.page?.toString() || '1');
   const itemsPerPage = useAppSelector(selectItemsPerPage);
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const handlePageChange = (page: number) => {
     dispatch(setCurrentPage(page));
+    router
+      .push({
+        pathname: '/',
+        query: { ...router.query, page: page },
+      })
+      .catch((error) => {
+        console.error('Navigation error:', error);
+      });
   };
 
   return (

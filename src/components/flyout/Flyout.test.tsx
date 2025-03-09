@@ -1,12 +1,31 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import Flyout from './Flyout';
-import { clearSelectedItems } from '../../features/selectedItems/selectedItemsSlice';
+import {
+  clearSelectedItems,
+  SelectedItem,
+} from '../../features/selectedItems/selectedItemsSlice';
+import { Provider } from 'react-redux';
+import configureMockStore from 'redux-mock-store';
+
+const mockStore = configureMockStore();
+const store = mockStore({ selectedItems: [] });
 
 const mockDispatch = vi.fn();
-const mockUseSelector = vi.fn();
+const mockSelectedItems: SelectedItem[] = [
+  {
+    name: 'Luke Skywalker',
+    birth_year: '19BBY',
+    gender: 'male',
+    height: '172',
+    mass: '77',
+    url: '#',
+  },
+];
 
-vi.mock('../../app/hooks', () => ({
+const mockUseSelector = vi.fn(() => mockSelectedItems);
+
+vi.mock('../../redux-store/hooks.ts', () => ({
   useAppDispatch: () => mockDispatch,
   useAppSelector: () => mockUseSelector(),
 }));
@@ -16,90 +35,91 @@ describe('Flyout Component', () => {
     vi.clearAllMocks();
   });
 
-  it('renders correctly when items are selected', () => {
-    mockUseSelector.mockReturnValue([
-      {
-        name: 'Luke Skywalker',
-        birth_year: '19BBY',
-        gender: 'male',
-        height: '172',
-        mass: '77',
-        url: '#',
-      },
-    ]);
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
-    render(<Flyout />);
+  it('renders correctly when items are selected', async () => {
+    mockUseSelector.mockReturnValue(mockSelectedItems);
 
-    expect(screen.getByText('1 items selected')).toBeInTheDocument();
+    render(
+      <Provider store={store}>
+        <Flyout />
+      </Provider>
+    );
+
+    const element = await screen.findByTestId('items-selected');
+    expect(element.textContent?.trim()).toBe('1 items selected');
   });
 
   it('does not render when no items are selected', () => {
-    mockUseSelector.mockReturnValue([]); // Ensure it returns an empty array
+    mockUseSelector.mockReturnValue([]);
 
-    render(<Flyout />);
+    render(
+      <Provider store={store}>
+        <Flyout />
+      </Provider>
+    );
 
-    expect(screen.queryByText('items selected')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('items-selected')).not.toBeInTheDocument();
   });
 
   it('dispatches clearSelectedItems when "Unselect All" is clicked', () => {
-    mockUseSelector.mockReturnValue([
-      {
-        name: 'Luke Skywalker',
-        birth_year: '19BBY',
-        gender: 'male',
-        height: '172',
-        mass: '77',
-        url: '#',
-      },
-    ]);
+    mockUseSelector.mockReturnValue(mockSelectedItems);
 
-    render(<Flyout />);
+    render(
+      <Provider store={store}>
+        <Flyout />
+      </Provider>
+    );
 
-    fireEvent.click(screen.getByText('Unselect All'));
+    const unselectAllButton = screen.getByTestId('unselect-all-button');
+    fireEvent.click(unselectAllButton);
 
     expect(mockDispatch).toHaveBeenCalledWith(clearSelectedItems());
   });
 
   it('triggers CSV download and clears selection when "Download CSV" is clicked', () => {
-    mockUseSelector.mockReturnValue([
-      {
-        name: 'Luke Skywalker',
-        birth_year: '19BBY',
-        gender: 'male',
-        height: '172',
-        mass: '77',
-        url: '#',
-      },
-    ]);
+    mockUseSelector.mockReturnValue(mockSelectedItems);
 
-    render(<Flyout />);
+    render(
+      <Provider store={store}>
+        <Flyout />
+      </Provider>
+    );
 
     global.URL.createObjectURL = vi.fn(() => 'mocked-url');
     global.URL.revokeObjectURL = vi.fn();
 
-    const anchor = document.createElement('a');
-    anchor.click = vi.fn();
-    const createElementSpy = vi
-      .spyOn(document, 'createElement')
-      .mockImplementation((tag) => {
-        if (tag === 'a') return anchor;
-        return document.createElement(tag);
-      });
-
     const appendChildSpy = vi.spyOn(document.body, 'appendChild');
     const removeChildSpy = vi.spyOn(document.body, 'removeChild');
 
-    fireEvent.click(screen.getByText('Download CSV'));
+    const downloadCsvButton = screen.getByTestId('download-csv-button');
+    fireEvent.click(downloadCsvButton);
 
-    expect(createElementSpy).toHaveBeenCalledWith('a');
-    expect(appendChildSpy).toHaveBeenCalledWith(anchor);
-    expect(removeChildSpy).toHaveBeenCalledWith(anchor);
+    expect(appendChildSpy).toHaveBeenCalledWith(expect.any(HTMLAnchorElement));
+    expect(removeChildSpy).toHaveBeenCalledWith(expect.any(HTMLAnchorElement));
+
     expect(URL.createObjectURL).toHaveBeenCalled();
     expect(URL.revokeObjectURL).toHaveBeenCalled();
-    expect(mockDispatch).toHaveBeenCalledWith(clearSelectedItems());
 
-    createElementSpy.mockRestore();
-    appendChildSpy.mockRestore();
-    removeChildSpy.mockRestore();
+    expect(mockDispatch).toHaveBeenCalledWith(clearSelectedItems());
+  });
+
+  it('should mock appendChild and removeChild', () => {
+    const appendChildSpy = vi
+      .spyOn(document.body, 'appendChild')
+      .mockImplementation((el: Node) => el);
+    const removeChildSpy = vi
+      .spyOn(document.body, 'removeChild')
+      .mockImplementation((el: Node) => el);
+
+    const div = document.createElement('div');
+
+    document.body.appendChild(div);
+    document.body.removeChild(div);
+
+    expect(appendChildSpy).toHaveBeenCalledWith(div);
+    expect(removeChildSpy).toHaveBeenCalledWith(div);
   });
 });

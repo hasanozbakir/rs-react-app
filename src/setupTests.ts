@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import '@testing-library/jest-dom/vitest';
 import { handlers } from './mocks/handlers';
 import { setupServer } from 'msw/node';

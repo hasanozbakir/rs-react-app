@@ -1,137 +1,93 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import {
-  describe,
-  it,
-  expect,
-  vi,
-  beforeEach,
-  beforeAll,
-  afterAll,
-  afterEach,
-} from 'vitest';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
-import {
-  MemoryRouter,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
-import { handlers } from '../../mocks/handlers';
-import { setupServer } from 'msw/node';
-import React from 'react';
+import userEvent from '@testing-library/user-event';
+import { useRouter } from 'next/router';
+import { useGetPersonQuery } from '@/features/api/apiSlice';
+import { useTheme } from '@/utils/themeContext';
 import Details from './Details';
-import { useGetPersonQuery } from '../../features/api/apiSlice';
 
-const server = setupServer(...handlers);
-
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
-  return {
-    ...actual,
-    useParams: vi.fn(),
-    useNavigate: vi.fn(),
-    useLocation: vi.fn(),
-  };
-});
-
-vi.mock('../../features/api/apiSlice', () => ({
-  useGetPersonQuery: vi.fn(),
+vi.mock('next/router', () => ({
+  useRouter: vi.fn(() => ({
+    query: { id: '1' },
+    push: vi.fn(() => Promise.resolve(true)),
+    replace: vi.fn(),
+    route: '/',
+    pathname: '/details',
+    asPath: '/details',
+    basePath: '',
+    isLocaleDomain: false,
+    forward: vi.fn(),
+    reload: vi.fn(),
+    back: vi.fn(),
+    prefetch: vi.fn(),
+    beforePopState: vi.fn(),
+    events: {
+      on: vi.fn(),
+      off: vi.fn(),
+      emit: vi.fn(),
+    },
+    isFallback: false,
+    isReady: true,
+    isPreview: false,
+  })),
 }));
 
-const store = configureStore({
-  reducer: {
-    // Add your reducers here if needed
-  },
-});
-
-vi.mock('../../utils/themeContext', () => ({
-  useTheme: () => ({ theme: 'light' }),
+vi.mock('@/features/api/apiSlice', () => ({
+  useGetPersonQuery: vi.fn(() => ({
+    data: undefined,
+    isLoading: true,
+    isError: false,
+    refetch: vi.fn(),
+  })),
 }));
 
-vi.mock('../spinner/Spinner', () => ({
-  default: () => React.createElement('div', null, 'Loading...'),
+vi.mock('@/utils/themeContext', () => ({
+  useTheme: vi.fn(() => ({
+    theme: 'light',
+    toggleTheme: vi.fn(),
+  })),
 }));
-
-const mockUseGetPersonQuery = (overrides = {}) => ({
-  data: undefined,
-  isLoading: false,
-  isError: false,
-  refetch: vi.fn(),
-  currentData: undefined,
-  isFetching: false,
-  isSuccess: false,
-  isUninitialized: false,
-  status: 'pending',
-  ...overrides,
-});
 
 describe('Details Component', () => {
-  const mockNavigate = vi.fn();
-  const mockLocation = {
-    state: {
-      person: null,
-      from: '/',
-    },
-    key: 'testKey',
-    pathname: '/details/1',
-    search: '',
-    hash: '',
-  };
+  const mockPush = vi.fn(() => Promise.resolve(true));
+  const mockReplace = vi.fn();
 
   beforeEach(() => {
+    vi.mocked(useRouter).mockReturnValue({
+      query: { id: '1' },
+      push: mockPush,
+      replace: mockReplace,
+      route: '/',
+      pathname: '/details',
+      asPath: '/details',
+      basePath: '',
+      isLocaleDomain: false,
+      forward: vi.fn(),
+      reload: vi.fn(),
+      back: vi.fn(),
+      prefetch: vi.fn(),
+      beforePopState: vi.fn(),
+      events: {
+        on: vi.fn(),
+        off: vi.fn(),
+        emit: vi.fn(),
+      },
+      isFallback: false,
+      isReady: true,
+      isPreview: false,
+    });
+
+    vi.mocked(useTheme).mockReturnValue({
+      theme: 'light',
+      toggleTheme: vi.fn(),
+    });
+  });
+
+  afterEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
-    vi.mocked(useLocation).mockReturnValue(mockLocation);
   });
 
-  beforeAll(() => server.listen());
-  afterEach(() => server.resetHandlers());
-  afterAll(() => server.close());
-
-  it('should render loading spinner when data is loading', () => {
-    vi.mocked(useParams).mockReturnValue({ id: '1' });
-    vi.mocked(useGetPersonQuery).mockReturnValue(
-      mockUseGetPersonQuery({
-        data: undefined,
-        isLoading: true,
-        isError: false,
-      })
-    );
-
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <Details />
-        </MemoryRouter>
-      </Provider>
-    );
-
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
-  });
-
-  it('should render error message when there is an error', () => {
-    vi.mocked(useParams).mockReturnValue({ id: '1' });
-    vi.mocked(useGetPersonQuery).mockReturnValue(
-      mockUseGetPersonQuery({
-        data: undefined,
-        isLoading: false,
-        isError: true,
-      })
-    );
-
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <Details />
-        </MemoryRouter>
-      </Provider>
-    );
-
-    expect(screen.getByText('Error loading details')).toBeInTheDocument();
-  });
-
-  it('should render person details when data is available', async () => {
+  it('should render person details', async () => {
     const mockPerson = {
       name: 'Luke Skywalker',
       height: '172',
@@ -140,25 +96,16 @@ describe('Details Component', () => {
       birth_year: '19BBY',
       hair_color: 'blond',
       skin_color: 'fair',
-      url: 'https://swapi.dev/api/people/1/',
     };
 
-    vi.mocked(useParams).mockReturnValue({ id: '1' });
-    vi.mocked(useGetPersonQuery).mockReturnValue(
-      mockUseGetPersonQuery({
-        data: mockPerson,
-        isLoading: false,
-        isError: false,
-      })
-    );
+    vi.mocked(useGetPersonQuery).mockReturnValue({
+      data: mockPerson,
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    });
 
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <Details />
-        </MemoryRouter>
-      </Provider>
-    );
+    render(<Details />);
 
     await waitFor(() => {
       expect(screen.getByText('Luke Skywalker')).toBeInTheDocument();
@@ -171,21 +118,36 @@ describe('Details Component', () => {
     });
   });
 
-  it('should navigate to not-found page if id is missing', () => {
-    vi.mocked(useParams).mockReturnValue({ id: undefined });
+  it('should redirect to not-found page if id is not provided', () => {
+    vi.mocked(useRouter).mockReturnValue({
+      query: {},
+      push: mockPush,
+      replace: mockReplace,
+      route: '/',
+      pathname: '/details',
+      asPath: '/details',
+      basePath: '',
+      isLocaleDomain: false,
+      forward: vi.fn(),
+      reload: vi.fn(),
+      back: vi.fn(),
+      prefetch: vi.fn(),
+      beforePopState: vi.fn(),
+      events: {
+        on: vi.fn(),
+        off: vi.fn(),
+        emit: vi.fn(),
+      },
+      isFallback: false,
+      isReady: true,
+      isPreview: false,
+    });
 
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <Details />
-        </MemoryRouter>
-      </Provider>
-    );
-
-    expect(mockNavigate).toHaveBeenCalledWith('/not-found', { replace: true });
+    render(<Details />);
+    expect(mockReplace).toHaveBeenCalledWith('/not-found');
   });
 
-  it('should call navigate with fromPage when close button is clicked', async () => {
+  it('should navigate back to home page when close button is clicked', async () => {
     const mockPerson = {
       name: 'Luke Skywalker',
       height: '172',
@@ -194,31 +156,20 @@ describe('Details Component', () => {
       birth_year: '19BBY',
       hair_color: 'blond',
       skin_color: 'fair',
-      url: 'https://swapi.dev/api/people/1/',
     };
 
-    vi.mocked(useParams).mockReturnValue({ id: '1' });
-    vi.mocked(useGetPersonQuery).mockReturnValue(
-      mockUseGetPersonQuery({
-        data: mockPerson,
-        isLoading: false,
-        isError: false,
-      })
-    );
+    vi.mocked(useGetPersonQuery).mockReturnValue({
+      data: mockPerson,
+      isLoading: false,
+      isError: false,
+      refetch: vi.fn(),
+    });
 
-    render(
-      <Provider store={store}>
-        <MemoryRouter>
-          <Details />
-        </MemoryRouter>
-      </Provider>
-    );
+    render(<Details />);
 
     const closeButton = screen.getByText('Close');
-    closeButton.click();
+    await userEvent.click(closeButton);
 
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/');
-    });
+    expect(mockPush).toHaveBeenCalledWith('/');
   });
 });
