@@ -1,9 +1,9 @@
-import { BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import ControlledComponentPage from './pages/ControlledComponentPage';
 import UncontrolledComponentPage from './pages/UncontrolledComponentPage';
-import NotFoundPage from "./pages/NotFoundPage";
+import NotFoundPage from './pages/NotFoundPage';
 import { ROUTES } from './utils/constants';
 import './App.css';
 
@@ -20,10 +20,7 @@ function App() {
           path={ROUTES.UNCONTROLLED_FORM}
           element={<UncontrolledComponentPage />}
         />
-        <Route
-          path={ROUTES.NOT_FOUND}
-          element={<NotFoundPage />}
-        />
+        <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
       </Routes>
     </Router>
   );
