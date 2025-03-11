@@ -1,15 +1,16 @@
-import { BrowserRouter as Router } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import MainPage from './pages/MainPage';
 import ControlledComponentPage from './pages/ControlledComponentPage';
 import UncontrolledComponentPage from './pages/UncontrolledComponentPage';
 import NotFoundPage from './pages/NotFoundPage';
+import Nav from './components/navbar/Nav';
 import { ROUTES } from './utils/constants';
 import './App.css';
 
 function App() {
   return (
-    <Router>
+    <>
+      <Nav />
       <Routes>
         <Route path={ROUTES.HOME} element={<MainPage />} />
         <Route
@@ -22,7 +23,7 @@ function App() {
         />
         <Route path={ROUTES.NOT_FOUND} element={<NotFoundPage />} />
       </Routes>
-    </Router>
+    </>
   );
 }
 
