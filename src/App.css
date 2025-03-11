@@ -1,27 +1,6 @@
 #root {
-  margin: 0 auto;
-  padding: 0 auto;
-}
-
-body {
-  font-family: 'Orbitron', serif;
-  box-sizing: border-box;
-  text-align: center;
-}
-
-.light {
-  background-color: #ffffff;
-  color: #000000;
-}
-
-.dark {
-  background-color: #333333;
-  color: #ffffff;
-}
-
-.app-container {
-  position: relative;
+  max-width: 1280px;
+  margin: 0;
   padding: 0;
-  width: 100%;
-  min-height: 100vh;
+  box-sizing: border-box;
 }
