@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { FormData } from '../../utils/types';
+import { FormValues } from '../../utils/types';
 import { initialState } from '../../utils/constants';
 
 const controlledFormSlice = createSlice({
   name: 'controlledForm',
   initialState,
   reducers: {
-    setControlledFormData: (_state, action: PayloadAction<FormData>) => {
-      return action.payload;
+    setControlledFormData: (state, action: PayloadAction<FormValues>) => {
+      return { ...state, ...action.payload };
     },
     resetControlledForm: () => initialState,
   },

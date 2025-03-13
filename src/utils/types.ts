@@ -1,13 +1,13 @@
-interface FormData {
+interface FormValues {
+  picture: string;
   name: string;
-  age: number | null;
+  age: number;
   email: string;
   password: string;
   confirmPassword: string;
-  gender: string;
+  gender: 'male' | 'female' | 'other' | '';
   termsAccepted: boolean;
-  picture?: string;
   country: string;
 }
 
-export type { FormData };
+export type { FormValues };

@@ -1,106 +1,88 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { FormData } from '../utils/types';
+import { useAppDispatch } from '../redux-store/hooks';
+import { setControlledFormData } from '../features/controlledForm/controlledFormSlice';
+import { formSchema } from '../utils/formSchema';
+import { FormValues } from '../utils/types';
+import { handleFileChange } from '../utils/handleFileChange';
 
 const ControlledComponentPage = () => {
+  const dispatch = useAppDispatch();
+
   const {
     register,
     handleSubmit,
-    // watch,
-    formState: { errors },
-  } = useForm<FormData>();
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: yupResolver(formSchema),
+  });
 
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const handleFormSubmit = async (data: FormValues) => {
+    dispatch(setControlledFormData(data));
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(handleFormSubmit)}>
       <label htmlFor="name">Name:</label>
-      <input
-        type="text"
-        id="name"
-        {...register('name', { required: 'Name is required' })}
-      />
+      <input id="name" {...register('name')} />
       {errors.name && <p>{errors.name.message}</p>}
 
       <label htmlFor="age">Age:</label>
-      <input
-        type="number"
-        id="age"
-        {...register('age', {
-          required: 'Age is required',
-          valueAsNumber: true,
-        })}
-      />
+      <input id="age" type="number" {...register('age')} />
       {errors.age && <p>{errors.age.message}</p>}
 
       <label htmlFor="email">Email:</label>
-      <input
-        type="email"
-        id="email"
-        {...register('email', { required: 'Email is required' })}
-      />
+      <input id="email" type="email" {...register('email')} />
       {errors.email && <p>{errors.email.message}</p>}
 
       <label htmlFor="password">Password:</label>
-      <input
-        type="password"
-        id="password"
-        {...register('password', { required: 'Password is required' })}
-      />
+      <input id="password" type="password" {...register('password')} />
       {errors.password && <p>{errors.password.message}</p>}
 
       <label htmlFor="confirmPassword">Confirm Password:</label>
       <input
-        type="password"
         id="confirmPassword"
-        {...register('confirmPassword', {
-          required: 'Please confirm your password',
-        })}
+        type="password"
+        {...register('confirmPassword')}
       />
       {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
 
       <label htmlFor="gender">Gender:</label>
-      <select
-        id="gender"
-        {...register('gender', { required: 'Gender is required' })}
-      >
-        <option value="">Select</option>
+      <select id="gender" {...register('gender')}>
+        <option value="">Select Gender</option>
         <option value="male">Male</option>
         <option value="female">Female</option>
         <option value="other">Other</option>
       </select>
       {errors.gender && <p>{errors.gender.message}</p>}
 
-      <label>
-        <input
-          type="checkbox"
-          {...register('termsAccepted', {
-            required: 'You must accept the terms',
-          })}
-        />{' '}
-        I accept the Terms & Conditions
+      <label htmlFor="termsAccepted">
+        <input type="checkbox" {...register('termsAccepted')} />
+        Accept Terms and Conditions
       </label>
       {errors.termsAccepted && <p>{errors.termsAccepted.message}</p>}
 
       <label htmlFor="picture">Upload Picture:</label>
       <input
-        type="file"
         id="picture"
-        {...register('picture')}
-        accept="image/*"
+        type="file"
+        accept="image/png, image/jpeg"
+        onChange={(event) =>
+          handleFileChange(event, setValue, setError, clearErrors)
+        }
       />
+      {errors.picture && <p>{errors.picture.message}</p>}
 
       <label htmlFor="country">Country:</label>
-      <input
-        type="text"
-        id="country"
-        {...register('country', { required: 'Country is required' })}
-        placeholder="Type to search..."
-      />
+      <input id="country" {...register('country')} />
       {errors.country && <p>{errors.country.message}</p>}
 
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Submitting...' : 'Submit'}
+      </button>
     </form>
   );
 };

@@ -1,4 +1,7 @@
-import { FormData } from './types';
+import { FormValues } from './types';
+
+export const FILE_SIZE_LIMIT = 2 * 1024 * 1024;
+export const SUPPORTED_FORMATS = ['image/jpeg', 'image/png'];
 
 export const ROUTES = {
   HOME: '/',
@@ -7,14 +10,14 @@ export const ROUTES = {
   NOT_FOUND: '*',
 };
 
-export const initialState: FormData = {
+export const initialState: FormValues = {
   name: '',
-  age: null,
+  age: 0,
   email: '',
   password: '',
   confirmPassword: '',
   gender: '',
   termsAccepted: false,
-  picture: undefined,
+  picture: '',
   country: '',
 };
