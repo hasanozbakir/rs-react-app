@@ -1,15 +1,19 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch } from '../redux-store/hooks';
 import { setControlledFormData } from '../features/controlledForm/controlledFormSlice';
 import { formSchema } from '../utils/formSchema';
 import { FormValues } from '../utils/types';
 import { handleFileChange } from '../utils/handleFileChange';
+import CountryAutocomplete from '../components/autocompletion/CountryAutocomplete';
 
 const ControlledComponentPage = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const {
+    control,
     register,
     handleSubmit,
     setValue,
@@ -22,6 +26,7 @@ const ControlledComponentPage = () => {
 
   const handleFormSubmit = async (data: FormValues) => {
     dispatch(setControlledFormData(data));
+    navigate('/');
   };
 
   return (
@@ -76,9 +81,7 @@ const ControlledComponentPage = () => {
       />
       {errors.picture && <p>{errors.picture.message}</p>}
 
-      <label htmlFor="country">Country:</label>
-      <input id="country" {...register('country')} />
-      {errors.country && <p>{errors.country.message}</p>}
+      <CountryAutocomplete control={control} name="country" errors={errors} />
 
       <button type="submit" disabled={isSubmitting}>
         {isSubmitting ? 'Submitting...' : 'Submit'}
