@@ -1,19 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { FormValues } from '../../utils/types';
-
-export interface FormEntry extends FormValues {
-  id: number;
-}
-
-interface FormState {
-  data: FormEntry[];
-  lastAddedId: number | null;
-}
-
-const initialState: FormState = {
-  data: [],
-  lastAddedId: null,
-};
+import { initialState } from '../../utils/constants';
 
 const controlledFormSlice = createSlice({
   name: 'controlledForm',

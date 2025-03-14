@@ -1,12 +1,12 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../redux-store/hooks';
-import { setControlledFormData } from '../features/controlledForm/controlledFormSlice';
-import { formSchema } from '../utils/formSchema';
-import { FormValues } from '../utils/types';
-import { handleFileChange } from '../utils/handleFileChange';
 import CountryAutocomplete from '../components/autocompletion/CountryAutocomplete';
+import { convertFileToBase64 } from '../utils/convertFileToBase64';
+import { setControlledFormData } from '../features/controlledForm/controlledFormSlice';
+import { FormSchemaValues } from '../utils/types';
+import { formSchema } from '../utils/formSchema';
 
 const ControlledComponentPage = () => {
   const dispatch = useAppDispatch();
@@ -16,17 +16,30 @@ const ControlledComponentPage = () => {
     control,
     register,
     handleSubmit,
-    setValue,
     setError,
-    clearErrors,
+    getValues,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
+  } = useForm<FormSchemaValues>({
     resolver: yupResolver(formSchema),
   });
 
-  const handleFormSubmit = async (data: FormValues) => {
-    dispatch(setControlledFormData(data));
-    navigate('/');
+  const handleFormSubmit = async (data: FormSchemaValues) => {
+    if (Object.keys(errors).length === 0) {
+      const file = data.picture[0];
+      try {
+        const base64String = await convertFileToBase64(file);
+        const updatedFormData = {
+          ...getValues(),
+          picture: base64String,
+        };
+
+        dispatch(setControlledFormData(updatedFormData));
+        navigate('/');
+      } catch (error) {
+        console.log(error);
+        setError('picture', { message: 'Error processing file' });
+      }
+    }
   };
 
   return (
@@ -72,12 +85,9 @@ const ControlledComponentPage = () => {
 
       <label htmlFor="picture">Upload Picture:</label>
       <input
-        id="picture"
         type="file"
         accept="image/png, image/jpeg"
-        onChange={(event) =>
-          handleFileChange(event, setValue, setError, clearErrors)
-        }
+        {...register('picture')}
       />
       {errors.picture && <p>{errors.picture.message}</p>}
 

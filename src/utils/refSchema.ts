@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
 import { FILE_SIZE_LIMIT, SUPPORTED_FORMATS } from './constants';
 
-export const formSchema = Yup.object().shape({
+export const refSchema = Yup.object().shape({
   name: Yup.string()
     .required('Name is required')
     .test(
@@ -39,24 +39,13 @@ export const formSchema = Yup.object().shape({
     .default(false)
     .transform((value) => (value === 'on' ? true : value))
     .oneOf([true], 'You must accept the terms and conditions'),
-  picture: Yup.mixed<FileList>()
-    .test('fileRequired', 'File is required', (value) => {
-      console.log(value);
-      if (!value || !(value instanceof FileList) || value.length === 0)
-        return false;
-      return true;
-    })
-    .test('fileSize', 'File size must be less than 2MB', (value) => {
-      if (!value || !(value instanceof FileList) || value.length === 0)
-        return false;
-      return value[0].size <= FILE_SIZE_LIMIT;
-    })
-    .test('fileType', 'Only PNG or JPEG files are allowed', (value) => {
-      if (!value || !(value instanceof FileList) || value.length === 0)
-        return false;
-      return SUPPORTED_FORMATS.includes(value[0].type);
-    })
-
+  picture: Yup.mixed<File | string>()
+    .test('fileType', 'Only PNG and JPEG files are allowed', (file) =>
+      file instanceof File ? SUPPORTED_FORMATS.includes(file.type) : false
+    )
+    .test('fileSize', 'File must be smaller than 2MB', (file) =>
+      file instanceof File ? file.size <= FILE_SIZE_LIMIT : false
+    )
     .required('Picture is required'),
   country: Yup.string().default('').required('Country selection is required'),
 });

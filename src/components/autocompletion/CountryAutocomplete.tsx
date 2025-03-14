@@ -1,67 +1,104 @@
 import { Control, Controller, FieldErrors } from 'react-hook-form';
-import { FormValues } from '../../utils/types';
-import { useState } from 'react';
+import { FormSchemaValues, FormValues } from '../../utils/types';
+import { useEffect, useRef, useState } from 'react';
 import { countries } from '../../data/countries';
+import { forwardRef } from 'react';
 
 interface Props {
-  control: Control<FormValues>;
+  control?: Control<FormSchemaValues>;
   name: keyof FormValues;
-  errors: FieldErrors<FormValues>;
+  errors?: FieldErrors<FormValues | FormSchemaValues>;
 }
 
-const CountryAutocomplete = ({ control, name, errors }: Props) => {
-  const [filteredCountries, setFilteredCountries] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState('');
+const CountryAutocomplete = forwardRef<HTMLInputElement, Props>(
+  ({ control, name, errors }, ref) => {
+    const [filteredCountries, setFilteredCountries] = useState<string[]>([]);
+    const [inputValue, setInputValue] = useState('');
+    const internalRef = useRef<HTMLInputElement | null>(null);
 
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-    setFilteredCountries(
-      countries.filter((country) =>
-        country.toLowerCase().includes(value.toLowerCase())
-      )
-    );
-  };
+    useEffect(() => {
+      if (!control && internalRef.current) {
+        internalRef.current.value = inputValue;
+      }
+    }, [inputValue, control]);
 
-  return (
-    <div>
-      <label htmlFor={name}>Country:</label>
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => (
-          <>
-            <input
-              id={name}
-              list="country-list"
-              {...field}
-              value={inputValue}
-              onChange={(e) => {
-                field.onChange(e.target.value);
-                handleInputChange(e.target.value);
-              }}
-            />
-            {filteredCountries.length > 0 && (
-              <ul>
-                {filteredCountries.map((country) => (
-                  <li
-                    key={country}
-                    onClick={() => {
-                      setInputValue(country);
-                      field.onChange(country);
-                      setFilteredCountries([]);
-                    }}
-                  >
-                    {country}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </>
+    const handleInputChange = (
+      value: string,
+      onChange?: (value: string) => void
+    ) => {
+      setInputValue(value);
+      setFilteredCountries(
+        countries.filter((country) =>
+          country.toLowerCase().startsWith(value.toLowerCase())
+        )
+      );
+      if (onChange) onChange(value);
+    };
+
+    const renderInput = (field?: {
+      value?: string | number | boolean;
+      onChange: (value: string) => void;
+    }) => (
+      <>
+        <input
+          ref={
+            control
+              ? undefined
+              : (ref as React.RefObject<HTMLInputElement>) || internalRef
+          }
+          id={name}
+          name={name}
+          list="country-list"
+          value={typeof field?.value === 'string' ? field.value : inputValue}
+          onChange={(e) => handleInputChange(e.target.value, field?.onChange)}
+        />
+        {filteredCountries.length > 0 && (
+          <ul>
+            {filteredCountries.map((country) => (
+              <li
+                key={country}
+                onClick={() => {
+                  setInputValue(country);
+                  field?.onChange?.(country);
+                  setFilteredCountries([]);
+                }}
+              >
+                {country}
+              </li>
+            ))}
+          </ul>
         )}
-      />
-      {errors[name] && <p>{errors[name].message}</p>}
-    </div>
-  );
-};
+      </>
+    );
+
+    return (
+      <div>
+        <label htmlFor={name}>Country:</label>
+        {control ? (
+          <Controller
+            name={name}
+            control={control}
+            render={({ field }) =>
+              renderInput({
+                value:
+                  typeof field.value === 'string' ||
+                  typeof field.value === 'number' ||
+                  typeof field.value === 'boolean'
+                    ? field.value
+                    : '',
+                onChange: field.onChange,
+              })
+            }
+          />
+        ) : (
+          renderInput()
+        )}
+        {errors && errors[name] && <p>{errors[name].message}</p>}
+      </div>
+    );
+  }
+);
+
+CountryAutocomplete.displayName = 'CountryAutocomplete';
 
 export default CountryAutocomplete;
