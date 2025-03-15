@@ -7,6 +7,7 @@ import { convertFileToBase64 } from '../utils/convertFileToBase64';
 import { setControlledFormData } from '../features/controlledForm/controlledFormSlice';
 import { FormSchemaValues } from '../utils/types';
 import { formSchema } from '../utils/formSchema';
+import { ROUTES } from '../utils/constants';
 
 const ControlledComponentPage = () => {
   const dispatch = useAppDispatch();
@@ -34,7 +35,7 @@ const ControlledComponentPage = () => {
         };
 
         dispatch(setControlledFormData(updatedFormData));
-        navigate('/');
+        navigate(ROUTES.HOME);
       } catch (error) {
         console.log(error);
         setError('picture', { message: 'Error processing file' });

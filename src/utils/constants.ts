@@ -9,6 +9,7 @@ export const ROUTES = {
   HOME: '/',
   CONTROLLED_FORM: '/react-hook-form',
   UNCONTROLLED_FORM: '/uncontrolled-form',
+  USE_ACTION_STATE_FORM: '/use-action-state-form',
   NOT_FOUND: '*',
 };
 

@@ -1,43 +1,38 @@
-import { useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useAppSelector } from '../redux-store/hooks';
+import FormDataList from '../components/formDataList/FormDataList';
 import { RootState } from '../redux-store/store';
-import { FormEntry } from '../utils/types';
 
 const Main = () => {
   const controlledData = useAppSelector(
     (state: RootState) => state.controlledForm
   );
-  const lastAddedId = useSelector(
-    (state: RootState) => state.controlledForm.lastAddedId
+  const uncontrolledData = useAppSelector(
+    (state: RootState) => state.uncontrolledForm
   );
+
+  const lastAddedId = useMemo(
+    () => controlledData.lastAddedId ?? uncontrolledData.lastAddedId,
+    [controlledData.lastAddedId, uncontrolledData.lastAddedId]
+  );
+
   const [highlightId, setHighlightId] = useState<number | null>(null);
 
   useEffect(() => {
     if (lastAddedId) {
       setHighlightId(lastAddedId);
-      setTimeout(() => setHighlightId(null), 3000);
+      const timeout = setTimeout(() => setHighlightId(null), 3000);
+      return () => clearTimeout(timeout);
     }
   }, [lastAddedId]);
 
   return (
     <div>
       <h1>Main Page</h1>
-      <div className="form-tiles">
-        {controlledData.data.map(({ id, name, email }: FormEntry) => (
-          <div
-            key={id}
-            className={`tile ${highlightId === id ? 'highlight' : ''}`}
-          >
-            <p>Name: {name}</p>
-            <p>Email: {email}</p>
-          </div>
-        ))}
+      <div className="form-container">
+        <FormDataList data={controlledData.data} highlightId={highlightId} />
+        <FormDataList data={uncontrolledData.data} highlightId={highlightId} />
       </div>
-
-      <style>{`
-  .highlight { background-color: yellow; transition: background-color 1s ease-in-out; }
-`}</style>
     </div>
   );
 };

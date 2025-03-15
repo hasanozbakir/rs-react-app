@@ -1,6 +1,5 @@
-import * as Yup from 'yup';
+import { processFormData } from './processFormData';
 import { refSchema } from './refSchema';
-import { convertFileToBase64 } from './convertFileToBase64';
 import { FormValues } from './types';
 
 interface FormState {
@@ -22,48 +21,17 @@ export async function handleFormAction(
   }
 
   const formData = Object.fromEntries(payload);
-  let isValid: FormValues;
-  let base64File: string = '';
+  const result = await processFormData(refSchema, formData);
 
-  try {
-    isValid = await refSchema.validate(formData, { abortEarly: false });
-    if (isValid) {
-      base64File = await convertFileToBase64(formData.picture as File);
-      console.log(formData);
-    }
-
-    return {
-      success: true,
-      formData: {
-        ...formData,
-        picture: base64File,
-      } as FormValues,
-    };
-  } catch (error) {
-    if (error instanceof Yup.ValidationError) {
-      const errors: Record<string, string[]> = {};
-      error.inner.forEach((err) => {
-        if (err.path) {
-          errors[err.path] = errors[err.path] || [];
-          errors[err.path].push(err.message);
-        }
-      });
-
-      const fields: Record<string, string> = {};
-      for (const key of Object.keys(formData)) {
-        fields[key] = formData[key].toString();
-      }
-
-      return {
-        success: false,
-        fields,
-        errors,
-      };
-    }
-
-    return {
-      success: false,
-      errors: { error: ['An unexpected error occurred'] },
-    };
+  if (result.success) {
+    return { success: true, formData: result.formData };
   }
+
+  return {
+    success: false,
+    errors: result.errors,
+    fields: Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [key, value.toString()])
+    ),
+  };
 }
