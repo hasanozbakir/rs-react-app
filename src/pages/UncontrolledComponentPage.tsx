@@ -8,12 +8,14 @@ import { processFormData } from '../utils/processFormData';
 import { useAppDispatch } from '../redux-store/hooks';
 import { addFormData } from '../features/form/formSlice';
 import { FormValues } from '../utils/types';
+import { checkPasswordStrength } from '../utils/checkPasswordStrength';
 import { ROUTES } from '../utils/constants';
 import '../App.css';
 
 const UncontrolledComponentPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [strength, setStrength] = useState('');
   const refs = useFormRefs();
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
@@ -46,6 +48,13 @@ const UncontrolledComponentPage = () => {
     }
   };
 
+  const handlePasswordChange = () => {
+    if (refs.passwordRef.current) {
+      const newPassword = refs.passwordRef.current.value;
+      setStrength(checkPasswordStrength(newPassword));
+    }
+  };
+
   return (
     <form ref={refs.formRef} onSubmit={handleSubmit}>
       <label htmlFor="name">Name:</label>
@@ -69,7 +78,12 @@ const UncontrolledComponentPage = () => {
         id="password"
         name="password"
         type="password"
+        onChange={handlePasswordChange}
       />
+
+      <div className="strength-bar">
+        <div className={`strength-level strength-${strength}`}></div>
+      </div>
       <p>{errors.find((err) => err.field === 'password')?.message}</p>
 
       <label htmlFor="confirmPassword">Confirm Password:</label>
