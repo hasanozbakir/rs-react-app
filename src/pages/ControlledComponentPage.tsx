@@ -29,7 +29,7 @@ const ControlledComponentPage = () => {
     formState: { errors, isSubmitting, isValid, isSubmitted },
   } = useForm<FormSchemaValues>({
     resolver: yupResolver(formSchema),
-    mode: 'onChange',
+    mode: 'onSubmit',
   });
 
   const handleFormSubmit = async (data: FormSchemaValues) => {
