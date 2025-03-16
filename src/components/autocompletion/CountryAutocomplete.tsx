@@ -40,7 +40,7 @@ const CountryAutocomplete = forwardRef<HTMLInputElement, Props>(
       value?: string | number | boolean;
       onChange: (value: string) => void;
     }) => (
-      <>
+      <div className="contry-list-container">
         <input
           ref={
             control
@@ -49,12 +49,11 @@ const CountryAutocomplete = forwardRef<HTMLInputElement, Props>(
           }
           id={name}
           name={name}
-          className="contry-list-container"
           list="country-list"
           value={typeof field?.value === 'string' ? field.value : inputValue}
           onChange={(e) => handleInputChange(e.target.value, field?.onChange)}
         />
-        {inputValue.trim() !== '' && filteredCountries.length > 0 && (
+        {filteredCountries.length > 0 && (
           <ul className="country-list">
             {filteredCountries.map((country) => (
               <li
@@ -71,7 +70,7 @@ const CountryAutocomplete = forwardRef<HTMLInputElement, Props>(
             ))}
           </ul>
         )}
-      </>
+      </div>
     );
 
     return (
