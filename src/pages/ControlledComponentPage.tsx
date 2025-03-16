@@ -1,17 +1,23 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../redux-store/hooks';
 import CountryAutocomplete from '../components/autocompletion/CountryAutocomplete';
 import { convertFileToBase64 } from '../utils/convertFileToBase64';
-import { setControlledFormData } from '../features/controlledForm/controlledFormSlice';
+import { addFormData } from '../features/form/formSlice';
 import { FormSchemaValues } from '../utils/types';
 import { formSchema } from '../utils/formSchema';
+import { checkPasswordStrength } from '../utils/checkPasswordStrength';
 import { ROUTES } from '../utils/constants';
+import '../App.css';
 
 const ControlledComponentPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  const [_, setPassword] = useState('');
+  const [strength, setStrength] = useState('');
 
   const {
     control,
@@ -19,9 +25,11 @@ const ControlledComponentPage = () => {
     handleSubmit,
     setError,
     getValues,
-    formState: { errors, isSubmitting },
+    setValue,
+    formState: { errors, isSubmitting, isValid, isSubmitted },
   } = useForm<FormSchemaValues>({
     resolver: yupResolver(formSchema),
+    mode: 'onChange',
   });
 
   const handleFormSubmit = async (data: FormSchemaValues) => {
@@ -34,7 +42,7 @@ const ControlledComponentPage = () => {
           picture: base64String,
         };
 
-        dispatch(setControlledFormData(updatedFormData));
+        dispatch(addFormData({ formData: updatedFormData, type: 'form' }));
         navigate(ROUTES.HOME);
       } catch (error) {
         console.log(error);
@@ -43,11 +51,22 @@ const ControlledComponentPage = () => {
     }
   };
 
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    setStrength(checkPasswordStrength(newPassword));
+    setValue('password', newPassword, { shouldValidate: true });
+  };
+
+  const shouldDisableButton = isSubmitted && !isValid;
+
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
       <label htmlFor="name">Name:</label>
       <input id="name" {...register('name')} />
       {errors.name && <p>{errors.name.message}</p>}
+
+      <CountryAutocomplete control={control} name="country" errors={errors} />
 
       <label htmlFor="age">Age:</label>
       <input id="age" type="number" {...register('age')} />
@@ -58,7 +77,17 @@ const ControlledComponentPage = () => {
       {errors.email && <p>{errors.email.message}</p>}
 
       <label htmlFor="password">Password:</label>
-      <input id="password" type="password" {...register('password')} />
+      <input
+        id="password"
+        type="password"
+        {...register('password')}
+        onChange={handlePasswordChange}
+      />
+
+      <div className="strength-bar">
+        <div className={`strength-level strength-${strength}`}></div>
+      </div>
+
       {errors.password && <p>{errors.password.message}</p>}
 
       <label htmlFor="confirmPassword">Confirm Password:</label>
@@ -74,7 +103,6 @@ const ControlledComponentPage = () => {
         <option value="">Select Gender</option>
         <option value="male">Male</option>
         <option value="female">Female</option>
-        <option value="other">Other</option>
       </select>
       {errors.gender && <p>{errors.gender.message}</p>}
 
@@ -92,9 +120,7 @@ const ControlledComponentPage = () => {
       />
       {errors.picture && <p>{errors.picture.message}</p>}
 
-      <CountryAutocomplete control={control} name="country" errors={errors} />
-
-      <button type="submit" disabled={isSubmitting}>
+      <button type="submit" disabled={shouldDisableButton}>
         {isSubmitting ? 'Submitting...' : 'Submit'}
       </button>
     </form>

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styles from './Nav.module.css';
 import { ROUTES } from '../../utils/constants';
 
@@ -7,24 +7,34 @@ const Nav = () => {
     <nav className={styles.nav}>
       <ul className={styles.navList}>
         <li>
-          <Link to={ROUTES.HOME} className={styles.navLink}>
+          <NavLink
+            to={ROUTES.HOME}
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
             Home
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to={ROUTES.CONTROLLED_FORM} className={styles.navLink}>
+          <NavLink
+            to={ROUTES.CONTROLLED_FORM}
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
             React Hook Form
-          </Link>
+          </NavLink>
         </li>
         <li>
-          <Link to={ROUTES.UNCONTROLLED_FORM} className={styles.navLink}>
+          <NavLink
+            to={ROUTES.UNCONTROLLED_FORM}
+            className={({ isActive }) =>
+              isActive ? `${styles.navLink} ${styles.active}` : styles.navLink
+            }
+          >
             Uncontrolled Form
-          </Link>
-        </li>
-        <li>
-          <Link to={ROUTES.USE_ACTION_STATE_FORM} className={styles.navLink}>
-            Use Action State Form
-          </Link>
+          </NavLink>
         </li>
       </ul>
     </nav>

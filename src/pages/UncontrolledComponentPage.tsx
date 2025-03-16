@@ -1,15 +1,19 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useFormRefs } from '../hooks/useFormRefs';
 import { refSchema } from '../utils/refSchema';
 import { getFormData } from '../data/getFormData';
 import CountryAutocomplete from '../components/autocompletion/CountryAutocomplete';
 import { processFormData } from '../utils/processFormData';
 import { useAppDispatch } from '../redux-store/hooks';
-import { setUncontrolledFormData } from '../features/uncontrolledForm/uncontrolledFormSlice';
+import { addFormData } from '../features/form/formSlice';
 import { FormValues } from '../utils/types';
+import { ROUTES } from '../utils/constants';
+import '../App.css';
 
 const UncontrolledComponentPage = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const refs = useFormRefs();
   const [errors, setErrors] = useState<{ field: string; message: string }[]>(
     []
@@ -28,7 +32,10 @@ const UncontrolledComponentPage = () => {
     const result = await processFormData(refSchema, rawFormData);
 
     if (result.success) {
-      dispatch(setUncontrolledFormData(result.formData as FormValues));
+      dispatch(
+        addFormData({ formData: result.formData as FormValues, type: 'ref' })
+      );
+      navigate(ROUTES.HOME);
     } else {
       setErrors(
         Object.entries(result.errors ?? {}).map(([field, messages]) => ({
@@ -44,6 +51,9 @@ const UncontrolledComponentPage = () => {
       <label htmlFor="name">Name:</label>
       <input ref={refs.nameRef} id="name" name="name" type="text" />
       <p>{errors.find((err) => err.field === 'name')?.message}</p>
+
+      <CountryAutocomplete ref={refs.countryRef} name="country" />
+      <p>{errors.find((err) => err.field === 'country')?.message}</p>
 
       <label htmlFor="age">Age:</label>
       <input ref={refs.ageRef} id="age" name="age" type="number" />
@@ -69,14 +79,13 @@ const UncontrolledComponentPage = () => {
         name="confirmPassword"
         type="password"
       />
-      <p>{errors.find((err) => err.field === 'confirmedPassword')?.message}</p>
+      <p>{errors.find((err) => err.field === 'confirmPassword')?.message}</p>
 
       <label>Gender:</label>
       <select ref={refs.genderRef} title="gender" name="gender">
         <option value="">Select Gender</option>
         <option value="male">Male</option>
         <option value="female">Female</option>
-        <option value="other">Other</option>
       </select>
       <p>{errors.find((err) => err.field === 'gender')?.message}</p>
 
@@ -90,10 +99,9 @@ const UncontrolledComponentPage = () => {
       <input ref={refs.pictureRef} id="picture" name="picture" type="file" />
       <p>{errors.find((err) => err.field === 'picture')?.message}</p>
 
-      <CountryAutocomplete ref={refs.countryRef} name="country" />
-      <p>{errors.find((err) => err.field === 'country')?.message}</p>
-
-      <button type="submit">Submit</button>
+      <button type="submit" disabled={errors.length > 0}>
+        Submit
+      </button>
     </form>
   );
 };

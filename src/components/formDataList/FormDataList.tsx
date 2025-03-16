@@ -1,17 +1,21 @@
 import { FormEntry } from '../../utils/types';
+import '../../App.css';
 
 const FormDataList = ({
   data,
   highlightId,
 }: {
   data: FormEntry[];
-  highlightId: number | null;
+  highlightId: string | null;
 }) => (
-  <div>
-    {data.map(({ id, name, email }: FormEntry) => (
-      <div key={id} className={highlightId === id ? 'highlight' : ''}>
+  <div className="list-container">
+    {data.map(({ id, name, email, age, country, picture }: FormEntry) => (
+      <div key={id} className={highlightId === id ? 'card highlight' : 'card'}>
         <p>Name: {name}</p>
+        <p>Age: {age}</p>
         <p>Email: {email}</p>
+        <p>Country: {country}</p>
+        <img src={picture as Base64URLString} alt="image" />
       </div>
     ))}
   </div>

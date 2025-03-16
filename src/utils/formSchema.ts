@@ -25,7 +25,7 @@ export const formSchema = Yup.object().shape({
     .matches(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .matches(/[a-z]/, 'Password must contain at least one lowercase letter')
     .matches(
-      /[!@#$%^&.,?_$*]/,
+      /[!@#$%^&*(),.?":{}|<>]/,
       'Password must contain at least one special character'
     )
     .required('Password is required'),
@@ -41,7 +41,6 @@ export const formSchema = Yup.object().shape({
     .oneOf([true], 'You must accept the terms and conditions'),
   picture: Yup.mixed<FileList>()
     .test('fileRequired', 'File is required', (value) => {
-      console.log(value);
       if (!value || !(value instanceof FileList) || value.length === 0)
         return false;
       return true;

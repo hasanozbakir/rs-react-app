@@ -3,6 +3,7 @@ import { FormSchemaValues, FormValues } from '../../utils/types';
 import { useEffect, useRef, useState } from 'react';
 import { countries } from '../../data/countries';
 import { forwardRef } from 'react';
+import '../../App.css';
 
 interface Props {
   control?: Control<FormSchemaValues>;
@@ -48,14 +49,16 @@ const CountryAutocomplete = forwardRef<HTMLInputElement, Props>(
           }
           id={name}
           name={name}
+          className="contry-list-container"
           list="country-list"
           value={typeof field?.value === 'string' ? field.value : inputValue}
           onChange={(e) => handleInputChange(e.target.value, field?.onChange)}
         />
-        {filteredCountries.length > 0 && (
-          <ul>
+        {inputValue.trim() !== '' && filteredCountries.length > 0 && (
+          <ul className="country-list">
             {filteredCountries.map((country) => (
               <li
+                className="country-name"
                 key={country}
                 onClick={() => {
                   setInputValue(country);

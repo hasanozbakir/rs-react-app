@@ -1,11 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import controlledFormReducer from '../features/controlledForm/controlledFormSlice';
-import uncontrolledFormReducer from '../features/uncontrolledForm/uncontrolledFormSlice';
+import controlledFormReducer from '../features/form/formSlice';
 
 export const store = configureStore({
   reducer: {
-    controlledForm: controlledFormReducer,
-    uncontrolledForm: uncontrolledFormReducer,
+    form: controlledFormReducer,
   },
 });
 

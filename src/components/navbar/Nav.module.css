@@ -1,0 +1,30 @@
+.nav {
+  background-color: #4185f4;
+  padding: 12px 20px;
+}
+
+.navList {
+  display: flex;
+  justify-content: space-around;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navLink {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Active Page Styling */
+.active {
+  background-color: white;
+  color: #4185f4;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}

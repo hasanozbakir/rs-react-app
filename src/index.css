@@ -11,9 +11,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --background-color: #e3f2fd;
 }
 
 body {
   margin: 0;
   padding: 0;
+  background: var(--background-color);
 }

@@ -23,12 +23,15 @@ interface FormSchemaValues {
 }
 
 interface FormEntry extends FormValues {
-  id: number;
+  id: string;
 }
 
 interface FormState {
-  data: FormEntry[];
-  lastAddedId: number | null;
+  data: {
+    form: FormEntry[];
+    ref: FormEntry[];
+  };
+  lastAddedId: string | null;
 }
 
 export type { FormValues, FormSchemaValues, FormEntry, FormState };
