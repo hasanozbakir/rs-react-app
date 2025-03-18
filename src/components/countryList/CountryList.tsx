@@ -5,13 +5,21 @@ import styles from './CountryList.module.css';
 
 interface CountryListProps {
   countries: Country[];
+  visitedCountries: string[];
+  toggleVisited: (name: string) => void;
 }
 
-const CountryList = ({ countries }: CountryListProps) => {
+const CountryList = ({
+  countries,
+  visitedCountries,
+  toggleVisited,
+}: CountryListProps) => {
   return (
     <div className={styles['list-container']}>
       {countries.map(({ name, population, region, flags }) => (
         <CountryCard
+          visitedCountries={visitedCountries}
+          toggleVisited={toggleVisited}
           key={name.common}
           name={name.common}
           population={population}

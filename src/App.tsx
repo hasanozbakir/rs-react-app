@@ -13,10 +13,13 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('All');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [sortOption, setSortOption] = useState<'name' | 'population' | null>(
     null
   );
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [visitedCountries, setVisitedCountries] = useState<string[]>(() => {
+    return JSON.parse(localStorage.getItem('visitedCountries') || '[]');
+  });
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -39,6 +42,10 @@ function App() {
     fetchCountries();
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem('visitedCountries', JSON.stringify(visitedCountries));
+  }, [visitedCountries]);
+
   const filteredCountries = useMemo(() => {
     return countries
       .filter((country) =>
@@ -58,6 +65,14 @@ function App() {
         return 0;
       });
   }, [countries, searchQuery, selectedRegion, sortOption, sortOrder]);
+
+  const toggleVisited = useCallback((countryName: string) => {
+    setVisitedCountries((prev) =>
+      prev.includes(countryName)
+        ? prev.filter((name) => name !== countryName)
+        : [...prev, countryName]
+    );
+  }, []);
 
   const handleSearchChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +118,11 @@ function App() {
           toggleSortOrder={toggleSortOrder}
         />
       </div>
-      <CountryList countries={filteredCountries} />
+      <CountryList
+        countries={filteredCountries}
+        visitedCountries={visitedCountries}
+        toggleVisited={toggleVisited}
+      />
     </div>
   );
 }

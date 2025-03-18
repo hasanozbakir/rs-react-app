@@ -54,6 +54,11 @@
   background-color: #f8f8f8;
 }
 
+.visited {
+  background-color: #d1ffd1;
+  border: 2px solid #2ecc71;
+}
+
 @media (max-width: 600px) {
   .country-card {
     flex-direction: column;
