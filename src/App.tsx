@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import './App.css';
 import CountryList from './components/countryList/CountryList';
 import Filter from './components/filter/Filter';
 import Search from './components/search/Search';
 import Sort from './components/sort/Sort';
-import { countries } from './data/countries';
 import { Country } from './utils/types';
+import { API_URL } from './utils/constants';
 
 function App() {
-  const data: Country[] = countries;
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('All');
   const [sortOption, setSortOption] = useState<'name' | 'population' | null>(
@@ -16,8 +18,29 @@ function App() {
   );
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
-  const filteredCountries = () => {
-    return data
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Failed to fetch countries');
+
+        const data = await response.json();
+        setCountries(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'An unknown error occurred'
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  const filteredCountries = useMemo(() => {
+    return countries
       .filter((country) =>
         country.name.common.toLowerCase().includes(searchQuery.toLowerCase())
       )
@@ -34,33 +57,53 @@ function App() {
         if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
         return 0;
       });
-  };
+  }, [countries, searchQuery, selectedRegion, sortOption, sortOrder]);
 
-  const handleSortChange = (option: string | null) => {
-    if (option === '' || option === null) {
-      setSortOption(null);
-    } else if (option === 'name' || option === 'population') {
-      setSortOption(option);
-    }
-  };
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value);
+    },
+    []
+  );
+
+  const handleRegionChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSelectedRegion(e.target.value);
+    },
+    []
+  );
+
+  const handleSortChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSortOption(e.target.value as 'name' | 'population' | null);
+    },
+    []
+  );
+
+  const toggleSortOrder = useCallback(() => {
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+  }, []);
+
+  if (isLoading) return <p className="loading">Loading countries...</p>;
+  if (error) return <p className="error">Error: {error}</p>;
 
   return (
     <div className="app-container">
       <h1>Country Explorer App</h1>
       <div className="controls">
-        <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <Search searchQuery={searchQuery} onSearchChange={handleSearchChange} />
         <Filter
           selectedRegion={selectedRegion}
-          setSelectedRegion={setSelectedRegion}
+          onRegionChange={handleRegionChange}
         />
         <Sort
           sortOption={sortOption}
-          setSortOption={handleSortChange}
+          onSortChange={handleSortChange}
           sortOrder={sortOrder}
-          setSortOrder={setSortOrder}
+          toggleSortOrder={toggleSortOrder}
         />
       </div>
-      <CountryList countries={filteredCountries()} />
+      <CountryList countries={filteredCountries} />
     </div>
   );
 }

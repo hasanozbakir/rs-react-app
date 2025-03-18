@@ -2,17 +2,17 @@ import styles from './Search.module.css';
 
 interface SearchProps {
   searchQuery: string;
-  setSearchQuery: (value: string) => void;
+  onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const Search = ({ searchQuery, setSearchQuery }: SearchProps) => {
+const Search = ({ searchQuery, onSearchChange }: SearchProps) => {
   return (
     <input
       className={styles['search-input']}
       type="text"
       placeholder="Search by name..."
       value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
+      onChange={onSearchChange}
     />
   );
 };

@@ -34,6 +34,26 @@ h1 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.loading {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #007bff; /* Blue */
+  text-align: center;
+  margin-top: 40vh;
+}
+
+.error {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #d9534f; /* Red */
+  text-align: center;
+  margin-top: 40vh;
+  background-color: #f8d7da; /* Light red */
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #d9534f;
+}
+
 @media (max-width: 600px) {
   .controls {
     flex-direction: column;

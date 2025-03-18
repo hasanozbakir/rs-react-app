@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Country } from '../../utils/types';
 import CountryCard from '../countryCard/CountryCard';
 import styles from './CountryList.module.css';
@@ -23,4 +24,4 @@ const CountryList = ({ countries }: CountryListProps) => {
   );
 };
 
-export default CountryList;
+export default memo(CountryList);

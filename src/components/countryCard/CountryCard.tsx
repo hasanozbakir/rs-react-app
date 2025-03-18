@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import styles from './ContryCard.module.css';
 
 interface CountryCardProps {
@@ -29,4 +30,4 @@ function CountryCard({
   );
 }
 
-export default CountryCard;
+export default memo(CountryCard);

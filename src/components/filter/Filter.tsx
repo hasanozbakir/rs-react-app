@@ -3,16 +3,16 @@ import styles from './Filter.module.css';
 
 interface FilterProps {
   selectedRegion: string;
-  setSelectedRegion: (region: string) => void;
+  onRegionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const Filter = ({ selectedRegion, setSelectedRegion }: FilterProps) => {
+const Filter = ({ selectedRegion, onRegionChange }: FilterProps) => {
   return (
     <select
       className={styles['region-select']}
       title="region-selected"
       value={selectedRegion}
-      onChange={(e) => setSelectedRegion(e.target.value)}
+      onChange={onRegionChange}
     >
       {regions.map((region) => (
         <option key={region} value={region}>
