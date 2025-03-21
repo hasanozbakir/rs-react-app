@@ -1,0 +1,32 @@
+.region-select {
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.region-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+.region-select::-ms-expand {
+  display: none;
+}
+
+.region-select:hover {
+  border-color: #007bff;
+}
+
+@media (max-width: 600px) {
+  .region-select {
+    width: 100%;
+    font-size: 14px;
+  }
+}

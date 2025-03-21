@@ -1,35 +1,130 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import './App.css';
+import CountryList from './components/countryList/CountryList';
+import Filter from './components/filter/Filter';
+import Search from './components/search/Search';
+import Sort from './components/sort/Sort';
+import { Country } from './utils/types';
+import { API_URL } from './utils/constants';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState('All');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortOption, setSortOption] = useState<'name' | 'population' | null>(
+    null
+  );
+  const [visitedCountries, setVisitedCountries] = useState<string[]>(() => {
+    return JSON.parse(localStorage.getItem('visitedCountries') || '[]');
+  });
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(API_URL);
+        if (!response.ok) throw new Error('Failed to fetch countries');
+
+        const data = await response.json();
+        setCountries(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'An unknown error occurred'
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('visitedCountries', JSON.stringify(visitedCountries));
+  }, [visitedCountries]);
+
+  const filteredCountries = useMemo((): Country[] => {
+    return countries
+      .filter((country) =>
+        country.name.common.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .filter(
+        (country) =>
+          selectedRegion === 'All' || country.region === selectedRegion
+      )
+      .sort((a, b) => {
+        if (!sortOption) return 0;
+        const valueA = sortOption === 'name' ? a.name.common : a.population;
+        const valueB = sortOption === 'name' ? b.name.common : b.population;
+
+        if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+        if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+  }, [countries, searchQuery, selectedRegion, sortOption, sortOrder]);
+
+  const toggleVisited = useCallback((countryName: string) => {
+    setVisitedCountries((prev) =>
+      prev.includes(countryName)
+        ? prev.filter((name) => name !== countryName)
+        : [...prev, countryName]
+    );
+  }, []);
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value);
+    },
+    []
+  );
+
+  const handleRegionChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSelectedRegion(e.target.value);
+    },
+    []
+  );
+
+  const handleSortChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setSortOption(e.target.value as 'name' | 'population' | null);
+    },
+    []
+  );
+
+  const toggleSortOrder = useCallback(() => {
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+  }, []);
+
+  if (isLoading) return <p className="loading">Loading countries...</p>;
+  if (error) return <p className="error">Error: {error}</p>;
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app-container">
+      <h1>Country Explorer App</h1>
+      <div className="controls">
+        <Search searchQuery={searchQuery} onSearchChange={handleSearchChange} />
+        <Filter
+          selectedRegion={selectedRegion}
+          onRegionChange={handleRegionChange}
+        />
+        <Sort
+          sortOption={sortOption}
+          onSortChange={handleSortChange}
+          sortOrder={sortOrder}
+          toggleSortOrder={toggleSortOrder}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <CountryList
+        countries={filteredCountries}
+        visitedCountries={visitedCountries}
+        toggleVisited={toggleVisited}
+      />
+    </div>
+  );
 }
 
-export default App
+export default App;
