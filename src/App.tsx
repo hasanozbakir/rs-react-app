@@ -46,7 +46,7 @@ function App() {
     localStorage.setItem('visitedCountries', JSON.stringify(visitedCountries));
   }, [visitedCountries]);
 
-  const filteredCountries = useMemo(() => {
+  const filteredCountries = useMemo((): Country[] => {
     return countries
       .filter((country) =>
         country.name.common.toLowerCase().includes(searchQuery.toLowerCase())
