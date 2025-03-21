@@ -42,21 +42,3 @@
 .sort-btn:active {
   transform: scale(0.95);
 }
-
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .sort-option-container {
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .sort-select {
-    width: 100%;
-    font-size: 14px;
-  }
-
-  .sort-btn {
-    width: 100%;
-    font-size: 16px;
-  }
-}
